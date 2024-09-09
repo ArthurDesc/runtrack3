@@ -1,20 +1,23 @@
-function sommenombrespremiers(a, b) {
-    function estPremier(nombre) {
-        if (nombre <= 1) return false;
-        for (let i = 2; i <= Math.sqrt(nombre); i++) {
-            if (nombre % i === 0) return false;
+function tri(numbers, order) {
+    return numbers.sort((a, b) => {
+        if (order === "asc") {
+            return a - b;
+        } else if (order === "desc") {
+            return b - a;
+        } else {
+            throw new Error("Le paramètre 'order' doit être 'asc' ou 'desc'");
         }
-        return true;
-    }
-
-    if (estPremier(a) && estPremier(b)) {
-        return a + b;
-    } else {
-        return false;
-    }
+    });
 }
 
 // Exemples d'utilisation
-console.log(sommenombrespremiers(2, 3));  // Devrait retourner 5
-console.log(sommenombrespremiers(2, 4));  // Devrait retourner false
-console.log(sommenombrespremiers(17, 19));  // Devrait retourner 36
+let tableau = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
+console.log("Tri ascendant:", tri([...tableau], "asc"));
+console.log("Tri descendant:", tri([...tableau], "desc"));
+
+// Test avec un ordre invalide
+try {
+    console.log(tri([...tableau], "invalid"));
+} catch (error) {
+    console.error("Erreur:", error.message);
+}
