@@ -31,7 +31,7 @@ function createImageElement(src, index) {
     return img;
 }
 
-// Fonction pour afficher les images
+// Fonction pour afficher les images (on donne images en attendant mais le paramètre final est imagePaths)
 function displayImages(images) {
     imageContainer.innerHTML = '';
     images.forEach((path, index) => {
@@ -46,11 +46,12 @@ function shuffleImages() {
     messageDiv.classList.add('hidden');
 }
 
-// Fonction pour échanger les images
+// Fonction pour gérer les échanges d'images
 function swapImages(draggedEl, targetEl) {
     const tempSrc = draggedEl.src;
     const tempIndex = draggedEl.dataset.index;
 
+    // Exchanging data
     draggedEl.src = targetEl.src;
     draggedEl.dataset.index = targetEl.dataset.index;
     draggedEl.alt = `Partie ${parseInt(targetEl.dataset.index) + 1} de l'arc-en-ciel`;
@@ -62,10 +63,12 @@ function swapImages(draggedEl, targetEl) {
     targetEl.setAttribute('aria-label', `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
 }
 
-// Fonction pour vérifier l'ordre des images
+// Function to check images order
 function checkOrder() {
+    // Create array from image container
     const images = Array.from(imageContainer.children);
     const currentOrder = images.map(img => parseInt(img.dataset.index));
+    // Check if index = value
     const isCorrect = currentOrder.every((value, index) => value === index);
 
     messageDiv.textContent = isCorrect ? 'Vous avez gagné' : 'Vous avez perdu';
