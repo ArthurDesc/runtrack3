@@ -1,25 +1,25 @@
+/* Styles par défaut pour la page */
 body {
-    min-height: 4096px;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-#content {
-    padding: 20px;
-}
-
-footer {
+/* Styles pour la navbar (cachée par défaut) */
+.navbar {
+    display: none; /* La navbar est cachée au départ */
+    background-color: white;
+    color: #0084FA;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
     position: fixed;
-    bottom: 0;
-    left: 0;
+    top: 0;
     width: 100%;
-    height: 10px;
-    background-color: #ddd;
+    z-index: 1000;
 }
 
-#progress-bar {
-    width: 100%;
-    height: 10%;
-    transform-origin: left;
-    transform: scaleX(0);
+/* Styles qui seront appliqués après le code Konami */
+.body-konami {
+    background-color: #0084FA; /* Bleu pour le fond */
 }
