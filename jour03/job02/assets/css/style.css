@@ -1,0 +1,18 @@
+   /* Ajoutez des styles si nécessaire */
+   #message {
+    font-weight: bold;
+    margin-top: 20px;
+}
+.container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.image {
+    width: 100px; /* Ajustez la taille des images */
+    height: auto;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+}
