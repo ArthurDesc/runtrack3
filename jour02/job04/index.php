@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercice Show/Hide</title>
+    <title>Exercice Keylogger</title>
 </head>
 <body>
-    <button id="button">Afficher/Masquer</button>
-    <div id="container"></div>
+    <textarea id="keylogger" rows="10" cols="50"></textarea>
 
     <script src="script.js"></script>
 </body>
