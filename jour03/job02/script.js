@@ -13,6 +13,12 @@ const imageContainer = document.getElementById('image-container');
 const shuffleButton = document.getElementById('shuffle-button');
 const messageDiv = document.getElementById('message');
 
+// Vérification de l'existence des éléments DOM
+if (!imageContainer || !shuffleButton || !messageDiv) {
+    console.error('Éléments DOM manquants');
+    throw new Error('Éléments DOM manquants');
+}
+
 // Fonction pour créer une image cliquable
 function createImageElement(src, index) {
     const img = document.createElement('img');
@@ -20,32 +26,8 @@ function createImageElement(src, index) {
     img.className = 'image';
     img.dataset.index = index;
     img.draggable = true;
-
-    // Événement lors du début du drag
-    img.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', index);
-        e.target.classList.add('dragging');
-    });
-
-    // Événement lors du drag sur un autre élément
-    img.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Permet de déposer l'élément
-    });
-
-    // Événement lors du drop
-    img.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const draggedIndex = e.dataTransfer.getData('text/plain');
-        swapImages(draggedIndex, index);
-        e.target.classList.remove('dragging');
-        checkOrder();
-    });
-
-    // Événement pour enlever l'effet visuel du drag
-    img.addEventListener('dragend', (e) => {
-        e.target.classList.remove('dragging');
-    });
-
+    img.alt = `Partie ${index + 1} de l'arc-en-ciel`;
+    img.setAttribute('aria-label', `Partie ${index + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
     return img;
 }
 
@@ -59,36 +41,80 @@ function displayImages(images) {
 
 // Fonction pour mélanger les images
 function shuffleImages() {
-    const shuffledImages = imagePaths.sort(() => Math.random() - 0.5);
+    const shuffledImages = [...imagePaths].sort(() => Math.random() - 0.5);
     displayImages(shuffledImages);
+    messageDiv.classList.add('hidden');
 }
 
 // Fonction pour échanger les images
-function swapImages(index1, index2) {
-    const images = Array.from(document.querySelectorAll('#image-container .image'));
-    const img1 = images[index1];
-    const img2 = images[index2];
+function swapImages(draggedEl, targetEl) {
+    const tempSrc = draggedEl.src;
+    const tempIndex = draggedEl.dataset.index;
 
-    // Réorganiser les images dans le conteneur
-    imageContainer.insertBefore(img2, img1);
-    imageContainer.insertBefore(img1, img2.nextSibling);
+    draggedEl.src = targetEl.src;
+    draggedEl.dataset.index = targetEl.dataset.index;
+    draggedEl.alt = `Partie ${parseInt(targetEl.dataset.index) + 1} de l'arc-en-ciel`;
+    draggedEl.setAttribute('aria-label', `Partie ${parseInt(targetEl.dataset.index) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
+
+    targetEl.src = tempSrc;
+    targetEl.dataset.index = tempIndex;
+    targetEl.alt = `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel`;
+    targetEl.setAttribute('aria-label', `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
 }
 
 // Fonction pour vérifier l'ordre des images
 function checkOrder() {
-    const images = Array.from(document.querySelectorAll('#image-container .image'));
-    const correctOrder = imagePaths.map((_, index) => index);
+    const images = Array.from(imageContainer.children);
     const currentOrder = images.map(img => parseInt(img.dataset.index));
+    const isCorrect = currentOrder.every((value, index) => value === index);
 
-    if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
-        messageDiv.textContent = 'Vous avez gagné';
-        messageDiv.style.color = 'green';
-    } else {
-        messageDiv.textContent = 'Vous avez perdu';
-        messageDiv.style.color = 'red';
-    }
+    messageDiv.textContent = isCorrect ? 'Vous avez gagné' : 'Vous avez perdu';
+    messageDiv.style.color = isCorrect ? 'green' : 'red';
     messageDiv.classList.remove('hidden');
 }
+
+// Gestion des événements de drag and drop avec délégation
+imageContainer.addEventListener('dragstart', (e) => {
+    if (e.target.classList.contains('image')) {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        e.target.classList.add('dragging');
+    }
+});
+
+imageContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const draggingEl = document.querySelector('.dragging');
+    if (draggingEl && e.target.classList.contains('image') && draggingEl !== e.target) {
+        e.target.classList.add('drag-over');
+    }
+});
+
+imageContainer.addEventListener('dragleave', (e) => {
+    if (e.target.classList.contains('image')) {
+        e.target.classList.remove('drag-over');
+    }
+});
+
+imageContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const draggingEl = document.querySelector('.dragging');
+    if (draggingEl && e.target.classList.contains('image') && draggingEl !== e.target) {
+        swapImages(draggingEl, e.target);
+        checkOrder();
+    }
+    document.querySelectorAll('.image').forEach(img => {
+        img.classList.remove('dragging', 'drag-over');
+    });
+});
+
+imageContainer.addEventListener('dragend', (e) => {
+    if (e.target.classList.contains('image')) {
+        e.target.classList.remove('dragging');
+    }
+    document.querySelectorAll('.image').forEach(img => {
+        img.classList.remove('drag-over');
+    });
+});
 
 // Initialiser les images et ajouter l'événement de mélange
 shuffleButton.addEventListener('click', shuffleImages);
