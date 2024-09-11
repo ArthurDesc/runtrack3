@@ -19,7 +19,7 @@ $(document).ready(() => {
             if (tile === 0) {
                 $tile.addClass('empty');
             } else {
-                const $img = $('<img>').attr('src', `./assets/pictures/${tile}.PNG`);
+                const $img = $('<img>').attr('src', `./assets/pictures/${tile}.jpg`);
                 $tile.append($img);
                 $tile.on('click', () => moveTile(index));
             }

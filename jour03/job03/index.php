@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="grid" id="grid"></div>
-    <button id="solveBtn">Finir la partie</button>
+    <button id="solveBtn">Cheat</button>
 
 
     <script src="./script.js"></script>
