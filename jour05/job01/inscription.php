@@ -1,6 +1,5 @@
 <?php
 require_once './autoload.php';
-
 Session::start();
 
 $errors = [];
@@ -14,23 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmPassword = $_POST['confirmPassword'] ?? '';
 
     // Validation des champs
-    if (empty($nom)) {
-        $errors['nom'] = "Le nom est requis.";
-    }
-    if (empty($prenom)) {
-        $errors['prenom'] = "Le prénom est requis.";
-    }
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "L'adresse email est invalide.";
-    }
-    if (empty($password)) {
-        $errors['password'] = "Le mot de passe est requis.";
-    } elseif (strlen($password) < 8) {
-        $errors['password'] = "Le mot de passe doit contenir au moins 8 caractères.";
-    }
-    if ($password !== $confirmPassword) {
-        $errors['confirmPassword'] = "Les mots de passe ne correspondent pas.";
-    }
+   
 
     // Si pas d'erreurs, on tente l'inscription
     if (empty($errors)) {
@@ -99,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit">S'inscrire</button>
         </form>
+        <div id="generalError" class="error" style="display: none;"></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="assets/js/script.js"></script>

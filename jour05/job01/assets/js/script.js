@@ -1,60 +1,116 @@
 $(document).ready(function() {
+    // Regex pour chaque type de champ
+    var regexPatterns = {
+        nom: /^[a-zA-ZÀ-ÿ\s'-]{2,50}$/,
+        prenom: /^[a-zA-ZÀ-ÿ\s'-]{2,50}$/,
+        email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+        password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    };
+
+    // Fonction de validation pour chaque champ
+    function validateField(field) {
+        var value = field.val().trim();
+        var id = field.attr('id');
+        var error = '';
+
+        switch(id) {
+            case 'nom':
+            case 'prenom':
+                if (value === '') {
+                    error = 'Ce champ est requis.';
+                } else if (!regexPatterns[id].test(value)) {
+                    error = 'Format invalide. Utilisez uniquement des lettres, espaces, apostrophes et tirets (2-50 caractères).';
+                }
+                break;
+            case 'email':
+                if (value === '') {
+                    error = 'L\'email est requis.';
+                } else if (!regexPatterns.email.test(value)) {
+                    error = 'L\'adresse email est invalide.';
+                }
+                break;
+            case 'password':
+                if (value === '') {
+                    error = 'Le mot de passe est requis.';
+                } else if (!regexPatterns.password.test(value)) {
+                    error = 'Le mot de passe doit contenir au moins 8 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.';
+                }
+                break;
+            case 'confirmPassword':
+                if (value === '') {
+                    error = 'La confirmation du mot de passe est requise.';
+                } else if (value !== $('#password').val()) {
+                    error = 'Les mots de passe ne correspondent pas.';
+                }
+                break;
+        }
+
+        // Afficher ou cacher le message d'erreur
+        var errorSpan = $('#' + id + 'Error');
+        errorSpan.text(error);
+        errorSpan.toggle(error !== '');
+
+        return error === '';
+    }
+
+    // Valider chaque champ lors de la saisie
+    $('#inscriptionForm input, #connexionForm input').on('input', function() {
+        validateField($(this));
+    });
+
+    // Validation du formulaire d'inscription lors de la soumission
     $('#inscriptionForm').submit(function(e) {
         e.preventDefault();
-        var errors = {};
-        
-        // Validation des champs
-        if ($('#nom').val().trim() === '') {
-            errors.nom = "Le nom est requis.";
-        }
-        if ($('#prenom').val().trim() === '') {
-            errors.prenom = "Le prénom est requis.";
-        }
-        if (!isValidEmail($('#email').val().trim())) {
-            errors.email = "L'adresse email est invalide.";
-        }
-        if ($('#password').val().length < 8) {
-            errors.password = "Le mot de passe doit contenir au moins 8 caractères.";
-        }
-        if ($('#password').val() !== $('#confirmPassword').val()) {
-            errors.confirmPassword = "Les mots de passe ne correspondent pas.";
-        }
-        
-        // Affichage des erreurs ou envoi du formulaire
-        if (Object.keys(errors).length > 0) {
-            // Afficher les erreurs
-            $('.error').text(''); // Effacer les anciennes erreurs
-            $.each(errors, function(key, value) {
-                $('#' + key + 'Error').text(value);
+        var isValid = true;
+
+        // Valider tous les champs
+        $(this).find('input').each(function() {
+            if (!validateField($(this))) {
+                isValid = false;
+            }
+        });
+
+        if (isValid) {
+            // Envoyer le formulaire via AJAX
+            $.ajax({
+                url: 'traitement_inscription.php',
+                method: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = 'connexion.php?inscription=success';
+                    } else {
+                        // Gérer les erreurs spécifiques à chaque champ
+                        if (response.errors) {
+                            $.each(response.errors, function(key, value) {
+                                $('#' + key + 'Error').text(value).show();
+                            });
+                        } else {
+                            $('#generalError').text(response.message).show();
+                        }
+                    }
+                },
+                error: function() {
+                    $('#generalError').text("Une erreur est survenue lors de l'inscription.").show();
+                }
             });
-        } else {
-            // Envoyer le formulaire
-            this.submit();
         }
     });
-    
+
+    // Code pour le formulaire de connexion
     $('#connexionForm').submit(function(e) {
         e.preventDefault();
-        var errors = {};
-        
-        // Validation de l'email
-        if ($('#email').val().trim() === '' || !isValidEmail($('#email').val().trim())) {
-            errors.email = "Veuillez entrer une adresse email valide.";
-        }
-        
-        // Validation du mot de passe
-        if ($('#password').val().trim() === '') {
-            errors.password = "Le mot de passe est requis.";
-        }
-        
-        // Affichage des erreurs ou envoi du formulaire
-        if (Object.keys(errors).length > 0) {
-            // Afficher les erreurs
-            $('.error').text(''); // Effacer les anciennes erreurs
-            $.each(errors, function(key, value) {
-                $('#' + key + 'Error').text(value);
-            });
-        } else {
+        var isValid = true;
+
+        // Valider tous les champs
+        $(this).find('input').each(function() {
+            if (!validateField($(this))) {
+                isValid = false;
+            }
+        });
+
+        if (isValid) {
             // Envoyer le formulaire via AJAX
             $.ajax({
                 url: 'traitement_connexion.php',
@@ -65,18 +121,20 @@ $(document).ready(function() {
                     if (response.success) {
                         window.location.href = 'index.php';
                     } else {
-                        $('.error').text(response.message);
+                        // Gérer les erreurs spécifiques à chaque champ
+                        if (response.errors) {
+                            $.each(response.errors, function(key, value) {
+                                $('#' + key + 'Error').text(value).show();
+                            });
+                        } else {
+                            $('#generalError').text(response.message).show();
+                        }
                     }
                 },
                 error: function() {
-                    $('.error').text("Une erreur est survenue lors de la connexion.");
+                    $('#generalError').text("Une erreur est survenue lors de la connexion.").show();
                 }
             });
         }
     });
-
-    function isValidEmail(email) {
-        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
 });
