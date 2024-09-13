@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Inclure Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Inclure les icônes de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header></header>
+    <main class="container">
+        <section>
+            <form>
+                <!-- Civilité -->
+                <div class="input-field">
+                    <p>Civilité</p>
+                    <p>
+                        <label>
+                            <input name="civilite" type="radio" value="monsieur"/>
+                            <span>Monsieur</span>
+                        </label>
+                    </p>
+                    <p>
+                        <label>
+                            <input name="civilite" type="radio" value="mad"/>
+                            <span>Madame</span>
+                        </label>
+                    </p>
+                    <p>
+                        <label>
+                            <input name="civilite" type="radio" value="mademoiselle"/>
+                            <span>Mademoiselle</span>
+                        </label>
+                    </p>
+                </div>
+
+                <!-- Prénom -->
+                <div class="input-field">
+                    <input id="prenom" type="text" class="validate">
+                    <label for="prenom">Prénom</label>
+                </div>
+                <!-- Nom -->
+                <div class="input-field">
+                    <input id="nom" type="text" class="validate">
+                    <label for="nom">Nom</label>
+                </div>
+
+                <!-- Adresse -->
+                <div class="input-field">
+                    <input id="adresse" type="text" class="validate">
+                    <label for="adresse">Adresse</label>
+                </div>
+
+                <!-- Email -->
+                <div class="input-field">
+                    <i class="material-icons prefix">email</i>
+                    <input id="email" type="email" class="validate">
+                    <label for="email">Email</label>
+                </div>
+
+                <!-- Mot passe -->
+                <div class="input-field">
+                    <i class="material-icons prefix">https</i>
+                    <input id="password" type="password" class="validate">
+                    <label for="password">Mot de passe</label>
+                </div>
+
+                <!-- Validation du mot de passe -->
+                <div class="input-field">
+                    <i class="material-icons prefix">https</i>
+                    <input id="confirmPassword" type="password" class="validate">
+                    <label for="confirmPassword">Confirmez le Mot de Passe</label>
+                </div>
+
+                <!-- Passions -->
+                <p>Passions</p>
+                <p>
+                    <label>
+                        <input type="checkbox" value="informatique"/>
+                        <span>Inique</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" value="voyages"/>
+                        <span>Voyages</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" value="sport"/>
+                        <span>Sport</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" valuelecture/>
+                        <span>Lecture</span>
+                    </label>
+                </p>
+              </section>
+    </main>
+    <footer>
+        <a href="#"><i class="material-icons">home</i> Accueil</a>
+        <br>
+        <a href="#"><i class="material-icons">person_add</i> Inscription</a>
+        <br>
+        <a href="#"><i class="material-icons">login</i> Connexion</a>
+        <br>
+        <a href="#"><i class="material-icons">search</i> Rechercher</a>
+    </footer>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
