@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - La Plateforme_</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+    <link rel="stylesheet" href="../styles/custom-materialize.css">
+</head>
+<body>
+    <!-- Le header sera inséré ici par JavaScript -->
+
+    <main class="container">
+        <h2 class="center-align">Inscription</h2>
+        <div class="row">
+            <form class="col s12 m8 offset-m2" id="inscription-form">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="prenom" type="text" class="validate" required>
+                        <label for="prenom">Prénom</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="nom" type="text" class="validate" required>
+                        <label for="nom">Nom</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="email" type="email" class="validate" required>
+                        <label for="email">Email</label>
+                        <span class="helper-text" data-error="Email invalide" data-success="Email valide">Utilisez votre adresse email de La Plateforme_</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="password" type="password" class="validate" required>
+                        <label for="password">Mot de passe</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="confirm-password" type="password" class="validate" required>
+                        <label for="confirm-password">Confirmer le mot de passe</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <button class="btn waves-effect waves-light light-blue darken-1 btn-large" type="submit" name="action">
+                            S'inscrire
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="page-footer light-blue lighten-1">
+        <!-- Contenu du footer -->
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="../js/loadComponents.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('inscription-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Ici, vous pouvez ajouter la logique de validation et d'envoi du formulaire
+                console.log('Formulaire soumis');
+            });
+        });
+    </script>
+</body>
+</html>
