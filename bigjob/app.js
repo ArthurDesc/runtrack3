@@ -111,4 +111,18 @@ app.get('/api/profil', estConnecte, (req, res) => {
     res.json({ user: req.session.user });
 });
 
+// Middleware pour vérifier si l'utilisateur est connecté
+function estAuthentifie(req, res, next) {
+    if (req.session.utilisateur) {
+        next();
+    } else {
+        res.redirect('/connexion');
+    }
+}
+
+// Route pour la page du calendrier, protégée par le middleware
+app.get('/calendrier', estAuthentifie, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'calendrier.html'));
+});
+
 module.exports = app;

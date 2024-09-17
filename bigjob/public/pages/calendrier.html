@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier de présence - La Plateforme_</title>
+    
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+    
+    <!-- Icônes Material -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="light-blue lighten-1">
+            <div class="nav-wrapper container">
+                <a href="/" class="brand-logo">
+                    <img src="/assets/images/logo.png" alt="Logo La Plateforme_" height="70">
+                </a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="./pages/calendrier.html">Prendre RDV</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li class="deconnecte"><a href="/pages/connexion.html" class="waves-effect waves-light btn">Connexion</a></li>
+                    <li class="deconnecte"><a href="/pages/inscription.html" class="waves-effect waves-light btn">Inscription</a></li>
+                    <li class="connecte"><span class="nom-utilisateur white-text"></span></li>
+                    <li class="connecte"><a href="/index.html" onclick="deconnecter()" class="waves-effect waves-light btn">Déconnexion</a></li>
+                </ul>
+            </div>
+        </nav>
+    
+        <ul class="sidenav" id="mobile-demo">
+            <li><a href="/">Accueil</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+            <li class="deconnecte"><a href="/pages/connexion.html">Connexion</a></li>
+            <li class="deconnecte"><a href="/pages/inscription.html">Inscription</a></li>
+            <li class="connecte"><span class="nom-utilisateur"></span></li>
+            <li class="connecte"><a href="#" onclick="deconnecter()">Déconnexion</a></li>
+        </ul>
+    </header>
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="/">Accueil</a></li>
+        <li><a href="#" onclick="deconnecter()">Déconnexion</a></li>
+    </ul>
+
+    <div class="container">
+        <h2 class="center-align">Calendrier de présence</h2>
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <!-- FullCalendar JavaScript -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+    
+    <!-- Vos scripts personnalisés -->
+    <script src="/js/sessionManager.js"></script>
+    <script src="/js/calendar.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation de la sidenav Materialize
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+
+            // Vérification de la connexion
+            if (!estConnecte()) {
+                window.location.href = '/connexion';
+            } else {
+                // Initialisation du calendrier (à implémenter dans calendar.js)
+                initCalendar();
+            }
+        });
+
+        function deconnecter() {
+            // Implémentez la logique de déconnexion ici
+            // Par exemple :
+            // localStorage.removeItem('user');
+            // window.location.href = '/connexion';
+        }
+    </script>
+</body>
+</html>
