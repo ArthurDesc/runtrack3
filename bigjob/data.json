@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "arthur@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "arthur.descourvieres@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "arthur.descourvieres@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "arthur.descourvieres@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "arthur@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "arthur",
+      "nom": "arthur",
+      "email": "derroce@laplateforme.io",
+      "password": "arthur"
+    },
+    {
+      "prenom": "derroce",
+      "nom": "derroce",
+      "email": "jules@laplateforme.io",
+      "password": "arthur"
+    }
+  ]
+}
