@@ -2,118 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <!-- Inclure Materialize CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <!-- Inclure les icônes de Google -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
+    <link href="https://fonts.googleapis.com/icon?familyMaterial+Icons rel="stylesheet</head>
+       <style>
+        .card-image img {
+            height : 300px;
+            width : 200px;
+        }   
+    </style>
 <body>
-    <header></header>
-    <main class="container">
-        <section>
-            <form>
-                <!-- Civilité -->
-                <div class="input-field">
-                    <p>Civilité</p>
-                    <p>
-                        <label>
-                            <input name="civilite" type="radio" value="monsieur"/>
-                            <span>Monsieur</span>
-                        </label>
-                    </p>
-                    <p>
-                        <label>
-                            <input name="civilite" type="radio" value="mad"/>
-                            <span>Madame</span>
-                        </label>
-                    </p>
-                    <p>
-                        <label>
-                            <input name="civilite" type="radio" value="mademoiselle"/>
-                            <span>Mademoiselle</span>
-                        </label>
-                    </p>
-                </div>
+    
+    <nav>
+        <div class="nav-wrapper">
+          <a href="#!" class="brand-logo">Adbeus</a>
+          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <ul class="right hide-on-med-and-down">
+            <li><a href="#">Sass</a></li>
+            <li><a href="#">Components</a></li>
+            <li><a href="#">Javascript</ali>
+            <li><a href="#">Mobile</a></li>
+          </ul>
+        </div>
+    </nav>
 
-                <!-- Prénom -->
-                <div class="input-field">
-                    <input id="prenom" type="text" class="validate">
-                    <label for="prenom">Prénom</label>
+    <!-- Page Layout here -->
+    <div classcontainer">
+        <h1 class="center-align">Mes Articles</h1>
+        <div class="row">
+            <!-- Colonne 1 -->
+            <div class="col s12 m4">
+                <div class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="./assets/pictures/images.jfif">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">Article 1<i class="material-icons right">more_vert</i></span>
+                        <p><a href="#">This is a link</a></p>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">Article 1<i class="material-icons right">close</i></span>
+                        <>Here is some more information about this product that is only revealed once clicked on.</>
+                    </div>
                 </div>
-                <!-- Nom -->
-                <div class="input-field">
-                    <input id="nom" type="text" class="validate">
-                    <label for="nom">Nom</label>
+ </div>
+
+            <!-- Colonne 2 -->
+            <div class="col s12 m6">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="./assets/pictures/images2.jfif">
+                        <span class="card-title">Article 2</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Un bref aperçu de l2. Il donne envie au lecteur d'en savoir plus.</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="#">Lire plus</a>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Adresse -->
-                <div class="input-field">
-                    <input id="adresse" type="text" class="validate">
-                    <label for="adresse">Adresse</label>
-                </div>
+    
+  <div class="row">
+    <div class="col s12 m7">
+      <div class="card large">
+        <div class="card-image">
+          <img src="images/sample-1.jpg">
+          <span class="card-title">Card Title</span>
+        </div>
+        <div class="card-content">
+          <p>I am a very simple card. I am good at containing small bits of information.
+          I am convenient because I require little markup to use effectively.</p>
+        </div>
+        <div class="card-action">
+          <a href="#">This is a link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+    
 
-                <!-- Email -->
-                <div class="input-field">
-                    <i class="material-icons prefix">email</i>
-                    <input id="email" type="email" class="validate">
-                    <label for="email">Email</label>
-                </div>
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="sass.html">Sass</a></li>
+       lia href="badges.htmlComponents</a></li>
+        <li><a href="collapsible.html">Javascript</a></li>
+        <li><a href="mobile.html">Mobile</a></li>
+    </ul>
 
-                <!-- Mot passe -->
-                <div class="input-field">
-                    <i class="material-icons prefix">https</i>
-                    <input id="password" type="password" class="validate">
-                    <label for="password">Mot de passe</label>
-                </div>
-
-                <!-- Validation du mot de passe -->
-                <div class="input-field">
-                    <i class="material-icons prefix">https</i>
-                    <input id="confirmPassword" type="password" class="validate">
-                    <label for="confirmPassword">Confirmez le Mot de Passe</label>
-                </div>
-
-                <!-- Passions -->
-                <p>Passions</p>
-                <p>
-                    <label>
-                        <input type="checkbox" value="informatique"/>
-                        <span>Inique</span>
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        <input type="checkbox" value="voyages"/>
-                        <span>Voyages</span>
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        <input type="checkbox" value="sport"/>
-                        <span>Sport</span>
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        <input type="checkbox" valuelecture/>
-                        <span>Lecture</span>
-                    </label>
-                </p>
-              </section>
-    </main>
-    <footer>
-        <a href="#"><i class="material-icons">home</i> Accueil</a>
-        <br>
-        <a href="#"><i class="material-icons">person_add</i> Inscription</a>
-        <br>
-        <a href="#"><i class="material-icons">login</i> Connexion</a>
-        <br>
-        <a href="#"><i class="material-icons">search</i> Rechercher</a>
-    </footer>
-
-    <!-- Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>

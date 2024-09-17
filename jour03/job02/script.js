@@ -8,34 +8,29 @@ const imagePaths = [
     'assets/pictures/arc6.png'
 ];
 
-// Référence aux éléments du DOM
-const imageContainer = document.getElementById('image-container');
-const shuffleButton = document.getElementById('shuffle-button');
-const messageDiv = document.getElementById('message');
-
 // Vérification de l'existence des éléments DOM
-if (!imageContainer || !shuffleButton || !messageDiv) {
+if ($('#image-container').length === 0 || $('#shuffle-button').length === 0 || $('#message').length === 0) {
     console.error('Éléments DOM manquants');
     throw new Error('Éléments DOM manquants');
 }
 
 // Fonction pour créer une image cliquable
 function createImageElement(src, index) {
-    const img = document.createElement('img');
-    img.src = src;
-    img.className = 'image';
-    img.dataset.index = index;
-    img.draggable = true;
-    img.alt = `Partie ${index + 1} de l'arc-en-ciel`;
-    img.setAttribute('aria-label', `Partie ${index + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
-    return img;
+    return $('<img>', {
+        src: src,
+        class: 'image',
+        'data-index': index,
+        draggable: true,
+        alt: `Partie ${index + 1} de l'arc-en-ciel`,
+        'aria-label': `Partie ${index + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`
+    });
 }
 
-// Fonction pour afficher les images (on donne images en attendant mais le paramètre final est imagePaths)
+// Fonction pour afficher les images
 function displayImages(images) {
-    imageContainer.innerHTML = '';
-    images.forEach((path, index) => {
-        imageContainer.appendChild(createImageElement(path, index));
+    $('#image-container').empty();
+    $.each(images, (index, path) => {
+        $('#image-container').append(createImageElement(path, index));
     });
 }
 
@@ -43,82 +38,73 @@ function displayImages(images) {
 function shuffleImages() {
     const shuffledImages = [...imagePaths].sort(() => Math.random() - 0.5);
     displayImages(shuffledImages);
-    messageDiv.classList.add('hidden');
+    $('#message').addClass('hidden');
 }
 
 // Fonction pour gérer les échanges d'images
-function swapImages(draggedEl, targetEl) {
-    const tempSrc = draggedEl.src;
-    const tempIndex = draggedEl.dataset.index;
+function swapImages($draggedEl, $targetEl) {
+    const tempSrc = $draggedEl.attr('src');
+    const tempIndex = $draggedEl.data('index');
 
-    // Exchanging data
-    draggedEl.src = targetEl.src;
-    draggedEl.dataset.index = targetEl.dataset.index;
-    draggedEl.alt = `Partie ${parseInt(targetEl.dataset.index) + 1} de l'arc-en-ciel`;
-    draggedEl.setAttribute('aria-label', `Partie ${parseInt(targetEl.dataset.index) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
+    $draggedEl.attr({
+        src: $targetEl.attr('src'),
+        'data-index': $targetEl.data('index'),
+        alt: `Partie ${parseInt($targetEl.data('index')) + 1} de l'arc-en-ciel`,
+        'aria-label': `Partie ${parseInt($targetEl.data('index')) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`
+    });
 
-    targetEl.src = tempSrc;
-    targetEl.dataset.index = tempIndex;
-    targetEl.alt = `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel`;
-    targetEl.setAttribute('aria-label', `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`);
+    $targetEl.attr({
+        src: tempSrc,
+        'data-index': tempIndex,
+        alt: `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel`,
+        'aria-label': `Partie ${parseInt(tempIndex) + 1} de l'arc-en-ciel. Glissez-déposez pour réorganiser.`
+    });
 }
 
 // Function to check images order
 function checkOrder() {
-    // Create array from image container
-    const images = Array.from(imageContainer.children);
-    const currentOrder = images.map(img => parseInt(img.dataset.index));
-    // Check if index = value
+    const currentOrder = $('#image-container').children().map((_, img) => parseInt($(img).data('index'))).get();
     const isCorrect = currentOrder.every((value, index) => value === index);
 
-    messageDiv.textContent = isCorrect ? 'Vous avez gagné' : 'Vous avez perdu';
-    messageDiv.style.color = isCorrect ? 'green' : 'red';
-    messageDiv.classList.remove('hidden');
+    $('#message').text(isCorrect ? 'Vous avez gagné' : 'Vous avez perdu')
+                 .css('color', isCorrect ? 'green' : 'red')
+                 .removeClass('hidden');
 }
 
-// Gestion des événements de drag and drop avec délégation
-imageContainer.addEventListener('dragstart', (e) => {
-    if (e.target.classList.contains('image')) {
-        e.dataTransfer.setData('text/plain', e.target.id);
-        e.target.classList.add('dragging');
+// Gestion des événements de drag and drop
+$('#image-container').on({
+    dragstart: function(e) {
+        if ($(e.target).hasClass('image')) {
+            e.originalEvent.dataTransfer.setData('text/plain', e.target.id);
+            $(e.target).addClass('dragging');
+        }
+    },
+    dragover: function(e) {
+        e.preventDefault();
+        const $draggingEl = $('.dragging');
+        if ($draggingEl.length && $(e.target).hasClass('image') && $draggingEl[0] !== e.target) {
+            $(e.target).addClass('drag-over');
+        }
+    },
+    dragleave: function(e) {
+        if ($(e.target).hasClass('image')) {
+            $(e.target).removeClass('drag-over');
+        }
+    },
+    drop: function(e) {
+        e.preventDefault();
+        const $draggingEl = $('.dragging');
+        if ($draggingEl.length && $(e.target).hasClass('image') && $draggingEl[0] !== e.target) {
+            swapImages($draggingEl, $(e.target));
+            checkOrder();
+        }
+        $('.image').removeClass('dragging drag-over');
+    },
+    dragend: function() {
+        $('.image').removeClass('dragging drag-over');
     }
-});
-
-imageContainer.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    const draggingEl = document.querySelector('.dragging');
-    if (draggingEl && e.target.classList.contains('image') && draggingEl !== e.target) {
-        e.target.classList.add('drag-over');
-    }
-});
-
-imageContainer.addEventListener('dragleave', (e) => {
-    if (e.target.classList.contains('image')) {
-        e.target.classList.remove('drag-over');
-    }
-});
-
-imageContainer.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const draggingEl = document.querySelector('.dragging');
-    if (draggingEl && e.target.classList.contains('image') && draggingEl !== e.target) {
-        swapImages(draggingEl, e.target);
-        checkOrder();
-    }
-    document.querySelectorAll('.image').forEach(img => {
-        img.classList.remove('dragging', 'drag-over');
-    });
-});
-
-imageContainer.addEventListener('dragend', (e) => {
-    if (e.target.classList.contains('image')) {
-        e.target.classList.remove('dragging');
-    }
-    document.querySelectorAll('.image').forEach(img => {
-        img.classList.remove('drag-over');
-    });
 });
 
 // Initialiser les images et ajouter l'événement de mélange
-shuffleButton.addEventListener('click', shuffleImages);
+$('#shuffle-button').on('click', shuffleImages);
 displayImages(imagePaths);
