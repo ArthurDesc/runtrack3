@@ -19,7 +19,7 @@ function mettreAJourInterface() {
         elementsConnecte.forEach(el => el.style.display = '');
         elementsDeconnecte.forEach(el => el.style.display = 'none');
         // Mettez à jour les éléments avec les informations de l'utilisateur
-        document.querySelectorAll('.nom-utilisateur').forEach(el => el.textContent = utilisateur.prenom + ' ' + utilisateur.nom);
+        document.querySelectorAll('.nom-utilisateur').forEach(el => el.textContent = `${utilisateur.prenom} `);
     } else {
         elementsConnecte.forEach(el => el.style.display = 'none');
         elementsDeconnecte.forEach(el => el.style.display = '');
@@ -32,7 +32,6 @@ function deconnecter() {
         .then(response => response.json())
         .then(data => {
             localStorage.removeItem('user');
-            alert(data.message);
             mettreAJourInterface();
             window.location.href = '/'; // Rediriger vers la page d'accueil
         })

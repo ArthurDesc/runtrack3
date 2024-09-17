@@ -21,10 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.error) {
                     alert(data.error);
                 } else {
-                    alert(data.message);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    mettreAJourInterface(); // Appel de la fonction de sessionManager.js
-                    window.location.href = '/'; // ou '/dashboard'
+                    mettreAJourInterface(); // Mettre à jour l'interface après la connexion
+                    window.location.href = '/'; // ou '/dashboard' si vous avez une page de tableau de bord
                 }
             })
             .catch((error) => {
@@ -55,7 +54,6 @@ if (connexionForm) {
             if (data.error) {
                 alert(data.error);
             } else {
-                alert(data.message);
                 // Stocker les informations de l'utilisateur dans le localStorage
                 localStorage.setItem('user', JSON.stringify(data.user));
                 // Rediriger vers le tableau de bord ou la page d'accueil après connexion
