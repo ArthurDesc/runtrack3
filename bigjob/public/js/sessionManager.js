@@ -10,7 +10,7 @@ function getUtilisateur() {
 }
 
 // Fonction pour mettre à jour l'interface utilisateur en fonction de l'état de connexion
-function mettreAJourInterface() {
+    function mettreAJourInterface() {
     const utilisateur = getUtilisateur();
     const elementsConnecte = document.querySelectorAll('.connecte');
     const elementsDeconnecte = document.querySelectorAll('.deconnecte');

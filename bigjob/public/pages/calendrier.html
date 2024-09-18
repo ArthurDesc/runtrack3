@@ -20,6 +20,9 @@
             margin: 0 auto;
             padding: 20px;
         }
+        #valider-dates {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -63,6 +66,12 @@
     <div class="container">
         <h2 class="center-align">Calendrier de présence</h2>
         <div id="calendar"></div>
+        <div class="center-align">
+            <button id="valider-dates" class="btn waves-effect waves-light">
+                Valider les dates sélectionnées
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
     </div>
 
     <!-- Materialize JavaScript -->
@@ -74,7 +83,7 @@
     <!-- Vos scripts personnalisés -->
     <script src="/js/sessionManager.js"></script>
     <script src="/js/calendar.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialisation de la sidenav Materialize
@@ -85,17 +94,13 @@
             if (!estConnecte()) {
                 window.location.href = '/connexion';
             } else {
-                // Initialisation du calendrier (à implémenter dans calendar.js)
+                // Initialisation du calendrier
                 initCalendar();
+
+                // Ajout de l'événement pour le bouton de validation
+                document.getElementById('valider-dates').addEventListener('click', validerDatesSelectionnees);
             }
         });
-
-        function deconnecter() {
-            // Implémentez la logique de déconnexion ici
-            // Par exemple :
-            // localStorage.removeItem('user');
-            // window.location.href = '/connexion';
-        }
     </script>
 </body>
 </html>

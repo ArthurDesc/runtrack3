@@ -125,4 +125,52 @@ app.get('/calendrier', estAuthentifie, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pages', 'calendrier.html'));
 });
 
+// Route pour réserver des dates
+app.post('/api/reserver-dates', estConnecte, async (req, res) => {
+    const { dates } = req.body;
+    const userId = req.session.user.id;
+
+    try {
+        const success = await enregistrerDatesReservees(userId, dates);
+        if (success) {
+            res.json({ message: 'Vos dates ont été réservées avec succès.' });
+        } else {
+            throw new Error('Échec de l\'enregistrement des réservations');
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement des dates:', error);
+        res.status(500).json({ error: 'Une erreur est survenue lors de la réservation des dates.' });
+    }
+});
+
+async function enregistrerDatesReservees(userId, dates) {
+    const reservationsPath = path.join(__dirname, 'reservations.json');
+    
+    try {
+        // Lire le fichier existant
+        let reservationsData = await fs.readFile(reservationsPath, 'utf8');
+        let reservations = JSON.parse(reservationsData).reservations;
+
+        // Générer un nouvel ID pour chaque réservation
+        const newId = Math.max(...reservations.map(r => r.id), 0) + 1;
+
+        // Ajouter les nouvelles réservations
+        const nouvellesReservations = dates.map((date, index) => ({
+            id: newId + index,
+            userId: userId,
+            date: date
+        }));
+
+        reservations = [...reservations, ...nouvellesReservations];
+
+        // Écrire les données mises à jour dans le fichier
+        await fs.writeFile(reservationsPath, JSON.stringify({ reservations }, null, 2));
+
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement des réservations:', error);
+        return false;
+    }
+}
+
 module.exports = app;
