@@ -26,75 +26,61 @@ app.get('/', (req, res) => {
 });
 
 // Route pour l'inscription
+// Route pour l'inscription
 app.post('/api/inscription', async (req, res) => {
-    const { prenom, nom, email, password } = req.body;
-    
-    // Vérification du domaine de l'email
-    if (!email.endsWith('@laplateforme.io')) {
-        return res.status(400).json({ error: 'Seules les adresses email de La Plateforme_ sont autorisées.' });
-    }
-
     try {
-        // Lire le fichier data.json
-        const data = await fs.readFile('data.json', 'utf8');
-        const jsonData = JSON.parse(data);
+        const { prenom, nom, email, password } = req.body;
+        const result = await insertUser({ prenom, nom, email, password });
         
-        // Ajouter le nouvel utilisateur
-        const newUser = { prenom, nom, email, password };
-        jsonData.users.push(newUser);
-
-        // Écrire les données mises à jour dans data.json
-        await fs.writeFile('data.json', JSON.stringify(jsonData, null, 2));
-
-        // Insérer l'utilisateur dans la base de données
-        await insertUser(newUser);
-
-        res.status(201).json({ message: 'Utilisateur inscrit avec succès' });
+        if (result.insertId) {
+            req.session.user = { id: result.insertId, prenom, nom, email };
+            res.json({ success: true, message: 'Inscription réussie' });
+        } else {
+            res.status(400).json({ error: 'Erreur d\'inscription' });
+        }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur lors de l\'inscription' });
+        console.error('Erreur lors de l\'inscription:', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
 
 // Nouvelle route pour la connexion
+// Route pour la connexion
 app.post('/api/connexion', async (req, res) => {
-    const { email, password } = req.body;
-
     try {
+        const { email, password } = req.body;
         const user = await findUserByEmail(email);
-
-        if (!user) {
-            return res.status(400).json({ error: 'Utilisateur non trouvé' });
+        
+        if (user && user.password === password) { // Note: Dans un vrai système, utilisez bcrypt pour comparer les mots de passe
+            req.session.user = { id: user.id, prenom: user.prenom, nom: user.nom, email: user.email };
+            res.json({ success: true, message: 'Connexion réussie' });
+        } else {
+            res.status(401).json({ error: 'Identifiants invalides' });
         }
-
-        if (user.password !== password) {
-            return res.status(400).json({ error: 'Mot de passe incorrect' });
-        }
-
-        // Stocker les informations de l'utilisateur dans la session
-        req.session.user = {
-            id: user.id,
-            prenom: user.prenom,
-            nom: user.nom,
-            email: user.email
-        };
-
-        res.status(200).json({ message: 'Connexion réussie', user: req.session.user });
-
     } catch (error) {
         console.error('Erreur lors de la connexion:', error);
-        res.status(500).json({ error: 'Erreur lors de la connexion' });
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
 
 // Route pour la déconnexion
 app.post('/api/deconnexion', (req, res) => {
-    req.session.destroy((err) => {
+    req.session.destroy(err => {
         if (err) {
-            return res.status(500).json({ error: 'Erreur lors de la déconnexion' });
+            res.status(500).json({ error: 'Erreur lors de la déconnexion' });
+        } else {
+            res.json({ message: 'Déconnexion réussie' });
         }
-        res.status(200).json({ message: 'Déconnexion réussie' });
     });
+});
+
+// Route pour vérifier l'état de connexion
+app.get('/api/user', (req, res) => {
+    if (req.session.user) {
+        res.json({ isConnected: true, user: req.session.user });
+    } else {
+        res.json({ isConnected: false });
+    }
 });
 
 // Middleware pour vérifier si l'utilisateur est connecté
@@ -128,6 +114,8 @@ app.post('/api/reservation', async (req, res) => {
     if (!req.session || !req.session.user) {
         return res.status(401).json({ success: false, error: 'Utilisateur non connecté' });
     }
+
+    // LA
 
     const userId = req.session.user.id;
 
