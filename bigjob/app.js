@@ -3,13 +3,13 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
-const { insertUser, findUserByEmail } = require('./database');
+const { insertUser, findUserByEmail, insertReservation } = require('./database');
 
 const app = express();
 
 // Configuration de la session
 app.use(session({
-    secret: 'votre_clé_secrète_ici', // Changez ceci pour une chaîne aléatoire
+    secret: 'votre_secret_ici',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Mettez à true si vous utilisez HTTPS
@@ -120,57 +120,51 @@ function estAuthentifie(req, res, next) {
     }
 }
 
-// Route pour la page du calendrier, protégée par le middleware
-app.get('/calendrier', estAuthentifie, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'pages', 'calendrier.html'));
-});
+// Route pour la réservation
+app.post('/api/reservation', async (req, res) => {
+    const { date } = req.body;
+    
+    // Vérifier si l'utilisateur est connecté
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ success: false, error: 'Utilisateur non connecté' });
+    }
 
-// Route pour réserver des dates
-app.post('/api/reserver-dates', estConnecte, async (req, res) => {
-    const { dates } = req.body;
     const userId = req.session.user.id;
 
     try {
-        const success = await enregistrerDatesReservees(userId, dates);
-        if (success) {
-            res.json({ message: 'Vos dates ont été réservées avec succès.' });
-        } else {
-            throw new Error('Échec de l\'enregistrement des réservations');
+        // Lire le fichier reservations.json
+        let reservations = [];
+        try {
+            const data = await fs.readFile('reservations.json', 'utf8');
+            reservations = JSON.parse(data);
+        } catch (error) {
+            // Si le fichier n'existe pas, on commence avec un tableau vide
+            console.log('Création d\'un nouveau fichier reservations.json');
         }
+
+        // Ajouter la nouvelle réservation
+        reservations.push({ date, userId });
+
+        // Écrire les données mises à jour dans reservations.json
+        await fs.writeFile('reservations.json', JSON.stringify(reservations, null, 2));
+
+        res.json({ success: true });
     } catch (error) {
-        console.error('Erreur lors de l\'enregistrement des dates:', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de la réservation des dates.' });
+        console.error('Erreur lors de la réservation:', error);
+        res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde de la réservation' });
     }
 });
 
-async function enregistrerDatesReservees(userId, dates) {
-    const reservationsPath = path.join(__dirname, 'reservations.json');
-    
+// Route pour les réservations
+app.get('/api/reservations', async (req, res) => {
     try {
-        // Lire le fichier existant
-        let reservationsData = await fs.readFile(reservationsPath, 'utf8');
-        let reservations = JSON.parse(reservationsData).reservations;
-
-        // Générer un nouvel ID pour chaque réservation
-        const newId = Math.max(...reservations.map(r => r.id), 0) + 1;
-
-        // Ajouter les nouvelles réservations
-        const nouvellesReservations = dates.map((date, index) => ({
-            id: newId + index,
-            userId: userId,
-            date: date
-        }));
-
-        reservations = [...reservations, ...nouvellesReservations];
-
-        // Écrire les données mises à jour dans le fichier
-        await fs.writeFile(reservationsPath, JSON.stringify({ reservations }, null, 2));
-
-        return true;
+        const data = await fs.readFile('reservations.json', 'utf8');
+        const reservations = JSON.parse(data);
+        res.json(reservations);
     } catch (error) {
-        console.error('Erreur lors de l\'enregistrement des réservations:', error);
-        return false;
+        console.error('Erreur lors de la lecture des réservations:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
     }
-}
+});
 
 module.exports = app;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier de présence - La Plateforme_</title>
+    <title>Calendrier de Réservation</title>
     
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -17,19 +17,14 @@
     <style>
         #calendar {
             max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        #valider-dates {
-            margin-top: 20px;
+            margin: 40px auto;
         }
     </style>
 </head>
-
 <body>
-
+    <!-- Barre de navigation -->
     <header>
-        <nav class="light-blue lighten-1">
+        <nav class="blue darken-2">
             <div class="nav-wrapper container">
                 <a href="/" class="brand-logo">
                     <img src="/assets/images/logo.png" alt="Logo La Plateforme_" height="70">
@@ -37,12 +32,12 @@
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="/">Accueil</a></li>
-                    <li><a href="./pages/calendrier.html">Prendre RDV</a></li>
+                    <li class="active"><a href="/pages/calendrier.html">Prendre RDV</a></li>
                     <li><a href="#">Contact</a></li>
                     <li class="deconnecte"><a href="/pages/connexion.html" class="waves-effect waves-light btn">Connexion</a></li>
                     <li class="deconnecte"><a href="/pages/inscription.html" class="waves-effect waves-light btn">Inscription</a></li>
                     <li class="connecte"><span class="nom-utilisateur white-text"></span></li>
-                    <li class="connecte"><a href="/index.html" onclick="deconnecter()" class="waves-effect waves-light btn">Déconnexion</a></li>
+                    <li class="connecte"><a href="#" onclick="deconnecter()" class="waves-effect waves-light btn">Déconnexion</a></li>
                 </ul>
             </div>
         </nav>
@@ -58,32 +53,35 @@
         </ul>
     </header>
 
+    <!-- Menu mobile -->
     <ul class="sidenav" id="mobile-demo">
         <li><a href="/">Accueil</a></li>
-        <li><a href="#" onclick="deconnecter()">Déconnexion</a></li>
+        <li class="active"><a href="/calendrier">Calendrier</a></li>
+        <li><a href="/deconnexion">Déconnexion</a></li>
     </ul>
 
     <div class="container">
-        <h2 class="center-align">Calendrier de présence</h2>
+        <h2 class="center-align">Calendrier de Réservation</h2>
+        
         <div id="calendar"></div>
+
         <div class="center-align">
-            <button id="valider-dates" class="btn waves-effect waves-light">
-                Valider les dates sélectionnées
+            <button id="valider-dates" class="btn waves-effect waves-light blue darken-2">
+                Valider la réservation
                 <i class="material-icons right">send</i>
             </button>
         </div>
     </div>
 
-    <!-- Materialize JavaScript -->
+    <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     
-    <!-- FullCalendar JavaScript -->
+    <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
     
     <!-- Vos scripts personnalisés -->
-    <script src="/js/sessionManager.js"></script>
-    <script src="/js/calendar.js"></script>
-
+    <script src="../js/sessionManager.js"></script>
+    <script src="../js/calendar.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialisation de la sidenav Materialize
@@ -98,7 +96,7 @@
                 initCalendar();
 
                 // Ajout de l'événement pour le bouton de validation
-                document.getElementById('valider-dates').addEventListener('click', validerDatesSelectionnees);
+                document.getElementById('valider-dates').addEventListener('click', validerDateSelectionnee);
             }
         });
     </script>

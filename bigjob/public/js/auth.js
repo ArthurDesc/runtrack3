@@ -21,9 +21,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.error) {
                     alert(data.error);
                 } else {
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    mettreAJourInterface(); // Mettre à jour l'interface après la connexion
-                    window.location.href = '/'; // ou '/dashboard' si vous avez une page de tableau de bord
+                    // Assurez-vous que data.user contient les informations de l'utilisateur
+                    if (data.user) {
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('userId', data.user.id);
+                        mettreAJourInterface(); // Mettre à jour l'interface après la connexion
+                        window.location.href = '/'; // ou '/dashboard' si vous avez une page de tableau de bord
+                    } else {
+                        console.error('Données utilisateur manquantes dans la réponse');
+                    }
                 }
             })
             .catch((error) => {
