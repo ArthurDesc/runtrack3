@@ -1,24 +1,38 @@
 const express = require('express');
+const session = require('express-session');
+const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
-const session = require('express-session');
 const { insertUser, findUserByEmail, insertReservation } = require('./database');
-
-const app = express();
 
 // Configuration de la session
 app.use(session({
-    secret: 'votre_secret_ici',
+    secret: process.env.SESSION_SECRET || 'votre_secret_ici', // Utilisez une chaîne aléatoire complexe en production
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Mettez à true si vous utilisez HTTPS
+    saveUninitialized: false,
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production', // Utilisez 'true' en production avec HTTPS
+        httpOnly: true,
+        sameSite: 'strict'
+    }
 }));
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware pour vérifier l'état de la session
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.user != null;
+    next();
+});
+
+// Route pour vérifier l'état de la session
+app.get('/api/check-session', (req, res) => {
+    res.json({ isAuthenticated: req.session.user != null });
+});
 
 // Route pour servir index.html
 app.get('/', (req, res) => {
@@ -67,11 +81,12 @@ app.post('/api/connexion', async (req, res) => {
             return res.status(400).json({ error: 'Utilisateur non trouvé' });
         }
 
+        // Vérification du mot de passe (idéalement avec une fonction de hachage)
         if (user.password !== password) {
             return res.status(400).json({ error: 'Mot de passe incorrect' });
         }
 
-        // Stocker les informations de l'utilisateur dans la session
+        // Enregistrement des informations de l'utilisateur dans la session
         req.session.user = {
             id: user.id,
             prenom: user.prenom,
@@ -79,11 +94,18 @@ app.post('/api/connexion', async (req, res) => {
             email: user.email
         };
 
-        res.status(200).json({ message: 'Connexion réussie', user: req.session.user });
+        // Sauvegarde explicite de la session
+        req.session.save((err) => {
+            if (err) {
+                console.error('Erreur lors de la sauvegarde de la session:', err);
+                return res.status(500).json({ error: 'Erreur lors de la connexion' });
+            }
+            res.status(200).json({ message: 'Connexion réussie', user: req.session.user });
+        });
 
     } catch (error) {
         console.error('Erreur lors de la connexion:', error);
-        res.status(500).json({ error: 'Erreur lors de la connexion' });
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
 
@@ -93,6 +115,7 @@ app.post('/api/deconnexion', (req, res) => {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de la déconnexion' });
         }
+        res.clearCookie('connect.sid'); // Effacer le cookie de session
         res.status(200).json({ message: 'Déconnexion réussie' });
     });
 });
@@ -110,15 +133,6 @@ function estConnecte(req, res, next) {
 app.get('/api/profil', estConnecte, (req, res) => {
     res.json({ user: req.session.user });
 });
-
-// Middleware pour vérifier si l'utilisateur est connecté
-function estAuthentifie(req, res, next) {
-    if (req.session.utilisateur) {
-        next();
-    } else {
-        res.redirect('/connexion');
-    }
-}
 
 // Route pour la réservation
 app.post('/api/reservation', async (req, res) => {
@@ -166,5 +180,8 @@ app.get('/api/reservations', async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });
+
+// Configuration pour faire confiance au proxy
+app.set('trust proxy', 1);
 
 module.exports = app;

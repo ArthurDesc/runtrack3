@@ -104,8 +104,21 @@
     <script src="../js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
+            const formConnexion = document.getElementById('form-connexion');
+            formConnexion.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                connexion(email, password)
+                    .then(data => {
+                        console.log('Connexion réussie', data);
+                        window.location.href = '/'; // Redirection vers la page d'accueil
+                    })
+                    .catch(error => {
+                        console.error('Erreur de connexion', error);
+                        alert('Erreur de connexion : ' + error.message);
+                    });
+            });
         });
     </script>
     <script src="/js/sessionManager.js"></script>
