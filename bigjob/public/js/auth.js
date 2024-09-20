@@ -53,7 +53,6 @@ if (connexionForm) {
             if (data.error) {
                 alert(data.error);
             } else {
-                alert('Connexion réussie');
                 window.location.href = '/'; // Redirection vers la page d'accueil
             }
         })
@@ -105,4 +104,18 @@ function mettreAJourInterface(estConnecte, user) {
     }
 }
 
+function isAdmin(req, res, next) {
+    if (req.session.user && req.session.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ error: 'Accès non autorisé' });
+    }
+}
+
+function afficherAdministration(isAdmin) {
+    const administration = document.getElementById('administration');
+    if (isAdmin) {
+        administration.style.display = 'block';
+    }
+}
 document.addEventListener('DOMContentLoaded', verifierConnexion);

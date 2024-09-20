@@ -1,1 +1,99 @@
-!
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - La Plateforme_</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+    <link rel="stylesheet" href="../styles/custom-materialize.css">
+</head>
+<body>
+    
+    <header>
+        <nav class="blue darken-2">
+            <div class="nav-wrapper container">
+                <a href="/" class="brand-logo">
+                    <img src="/assets/images/logo.png" alt="Logo La Plateforme_" height="70">
+                </a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li class="active"><a href="/">Accueil</a></li>
+                    <li><a href="/pages/calendrier.html">Prendre RDV</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li class="deconnecte"><a href="/pages/connexion.html" class="waves-effect waves-light btn">Connexion</a></li>
+                    <li class="deconnecte"><a href="/pages/inscription.html" class="waves-effect waves-light btn">Inscription</a></li>
+                    <li class="connecte"><span class="nom-utilisateur white-text"></span></li>
+                    <li class="connecte admin-only" style="display: none;"><a href="/pages/admin.html" class="waves-effect waves-light btn">Administration</a></li>
+                    <li class="connecte"><a href="#" onclick="deconnecter()" class="waves-effect waves-light btn">Déconnexion</a></li>
+                </ul>
+            </div>
+        </nav>
+    
+        <ul class="sidenav" id="mobile-demo">
+            <li><a href="/">Accueil</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+            <li class="deconnecte"><a href="/pages/connexion.html">Connexion</a></li>
+            <li class="deconnecte"><a href="/pages/inscription.html">Inscription</a></li>
+            <li class="connecte"><span class="nom-utilisateur"></span></li>
+            <li class="connecte admin-only" style="display: none;"><a href="/pages/admin.html">Administration</a></li>
+            <li class="connecte"><a href="#" onclick="deconnecter()">Déconnexion</a></li>
+        </ul>
+    </header>
+
+    <main class="container">
+        <h2>Gestion des utilisateurs</h2>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body">
+                <!-- Les données des utilisateurs seront insérées ici -->
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="page-footer blue darken-1">
+        <div class="container">
+            <div class="row">
+                <div class="col l4 s12">
+                    <h5 class="white-text">Liens utiles</h5>
+                    <ul>
+                        <li><a class="grey-text text-lighten-3" href="#">Politique de confidentialité</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+                <div class="col l4 s12">
+                    <h5 class="white-text">Contact</h5>
+                    <p class="grey-text text-lighten-4">Email : contact@laplateforme.io</p>
+                    <p class="grey-text text-lighten-4">Téléphone : 01 23 45 67 89</p>
+                </div>
+                <div class="col l4 s12">
+                    <h5 class="white-text">Suivez-nous</h5>
+                    <!-- Ajoutez ici des icônes de réseaux sociaux -->
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2023 La Plateforme_. Tous droits réservés.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/sessionManager.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

@@ -17,14 +17,26 @@ function mettreAJourInterface() {
     getUtilisateur().then(utilisateur => {
         const elementsConnecte = document.querySelectorAll('.connecte');
         const elementsDeconnecte = document.querySelectorAll('.deconnecte');
+        const elementsAdmin = document.querySelectorAll('.admin-only');
 
         if (utilisateur) {
             elementsConnecte.forEach(el => el.style.display = '');
             elementsDeconnecte.forEach(el => el.style.display = 'none');
-            // Vous pouvez ajouter ici du code pour afficher le nom de l'utilisateur, etc.
+            
+            // Afficher le nom de l'utilisateur
+            const nomUtilisateurElements = document.querySelectorAll('.nom-utilisateur');
+            nomUtilisateurElements.forEach(el => el.textContent = `${utilisateur.prenom} `);
+            
+            // Afficher le bouton d'administration si l'utilisateur est admin
+            if (utilisateur.role === 'admin') {
+                elementsAdmin.forEach(el => el.style.display = '');
+            } else {
+                elementsAdmin.forEach(el => el.style.display = 'none');
+            }
         } else {
             elementsConnecte.forEach(el => el.style.display = 'none');
             elementsDeconnecte.forEach(el => el.style.display = '');
+            elementsAdmin.forEach(el => el.style.display = 'none');
         }
     });
 }

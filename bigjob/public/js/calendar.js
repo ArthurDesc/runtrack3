@@ -1,5 +1,5 @@
 let calendar;
-let selectedDate;
+let selectedDates = [];
 
 function initCalendar() {
     var calendarEl = document.getElementById('calendar');
@@ -21,7 +21,25 @@ function initCalendar() {
         height: 'auto',
         selectable: true, // Permet la sélection de dates
         select: function(info) {
-            selectedDate = info.startStr;
+            let dateStr = info.startStr;
+            let selectedDate = new Date(dateStr);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); // Réinitialiser l'heure à minuit
+
+            if (selectedDate < today) {
+                alert('Vous ne pouvez pas réserver une date dans le passé.');
+                return;
+            }
+
+            if (!selectedDates.includes(dateStr)) {
+                selectedDates.push(dateStr);
+                calendar.addEvent({
+                    title: 'Sélectionné',
+                    start: dateStr,
+                    allDay: true,
+                    color: 'green'
+                });
+            }
         }
     });
     chargerRendezVousExistants();
@@ -43,26 +61,32 @@ function chargerRendezVousExistants() {
     .catch(error => console.error('Erreur lors du chargement des rendez-vous:', error));
 }
 
-function validerDateSelectionnee() {
+function validerDatesSelectionnees() {
+    if (selectedDates.length === 0) {
+        alert('Veuillez sélectionner au moins une date.');
+        return;
+    }
 
-
-    fetch('/api/reservation', {
+    fetch('/api/reservations', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ date: selectedDate }),
+        body: JSON.stringify({ dates: selectedDates }),
+        credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Rendez-vous réservé avec succès pour le ' + selectedDate + ' !');
-            calendar.addEvent({
-                title: 'Réservé',
-                start: selectedDate,
-                allDay: true
+            alert('Rendez-vous réservés avec succès !');
+            selectedDates.forEach(date => {
+                calendar.addEvent({
+                    title: 'Réservé',
+                    start: date,
+                    allDay: true
+                });
             });
-            selectedDate = null;
+            selectedDates = [];
         } else {
             alert('Erreur lors de la réservation : ' + data.error);
         }
@@ -75,5 +99,5 @@ function validerDateSelectionnee() {
 
 document.addEventListener('DOMContentLoaded', function() {
     initCalendar();
-    document.getElementById('valider-dates').addEventListener('click', validerDateSelectionnee);
+    document.getElementById('valider-dates').addEventListener('click', validerDatesSelectionnees);
 });

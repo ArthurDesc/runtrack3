@@ -72,4 +72,37 @@ async function findUserByEmail(email) {
   }
 }
 
-module.exports = { insertUser, exportDataToDatabase, findUserByEmail };
+// Fonction pour récupérer tous les utilisateurs
+async function getAllUsers() {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute('SELECT id, prenom, nom, email, role FROM users');
+    return rows;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs:', error);
+    throw error;
+  } finally {
+    await connection.end();
+  }
+}
+
+// Fonction pour mettre à jour le rôle d'un utilisateur
+async function updateUserRole(userId, newRole) {
+  const connection = await connectToDatabase();
+  try {
+    await connection.execute('UPDATE users SET role = ? WHERE id = ?', [newRole, userId]);
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du rôle de l\'utilisateur:', error);
+    throw error;
+  } finally {
+    await connection.end();
+  }
+}
+
+module.exports = {
+  insertUser,
+  exportDataToDatabase,
+  findUserByEmail,
+  getAllUsers,
+  updateUserRole
+};

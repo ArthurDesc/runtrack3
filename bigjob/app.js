@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
-const { insertUser, findUserByEmail, insertReservation } = require('./database');
+const { insertUser, findUserByEmail, insertReservation, getAllUsers } = require('./database');
 
 const app = express();
 
@@ -49,8 +49,23 @@ app.post('/api/connexion', async (req, res) => {
     try {
         const user = await findUserByEmail(email);
         if (user && user.password === password) {
-            req.session.user = { id: user.id, email: user.email, prenom: user.prenom, nom: user.nom };
-            res.json({ message: 'Connexion réussie' });
+            req.session.user = {
+                id: user.id,
+                prenom: user.prenom,
+                nom: user.nom,
+                email: user.email,
+                role: user.role
+            };
+            res.json({ 
+                message: 'Connexion réussie', 
+                user: { 
+                    id: user.id, 
+                    prenom: user.prenom, 
+                    nom: user.nom, 
+                    email: user.email, 
+                    role: user.role 
+                } 
+            });
         } else {
             res.status(401).json({ error: 'Email ou mot de passe incorrect' });
         }
@@ -94,10 +109,9 @@ function estAuthentifie(req, res, next) {
 }
 
 // Route pour la réservation
-app.post('/api/reservation', async (req, res) => {
-    const { date } = req.body;
+app.post('/api/reservations', async (req, res) => {
+    const { dates } = req.body;
     
-    // Vérifier si l'utilisateur est connecté
     if (!req.session || !req.session.user) {
         return res.status(401).json({ success: false, error: 'Utilisateur non connecté' });
     }
@@ -105,26 +119,24 @@ app.post('/api/reservation', async (req, res) => {
     const userId = req.session.user.id;
 
     try {
-        // Lire le fichier reservations.json
         let reservations = [];
         try {
             const data = await fs.readFile('reservations.json', 'utf8');
             reservations = JSON.parse(data);
         } catch (error) {
-            // Si le fichier n'existe pas, on commence avec un tableau vide
             console.log('Création d\'un nouveau fichier reservations.json');
         }
 
-        // Ajouter la nouvelle réservation
-        reservations.push({ date, userId });
+        dates.forEach(date => {
+            reservations.push({ date, userId });
+        });
 
-        // Écrire les données mises à jour dans reservations.json
         await fs.writeFile('reservations.json', JSON.stringify(reservations, null, 2));
 
         res.json({ success: true });
     } catch (error) {
         console.error('Erreur lors de la réservation:', error);
-        res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde de la réservation' });
+        res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde des réservations' });
     }
 });
 
@@ -146,6 +158,31 @@ app.get('/api/check-auth', (req, res) => {
         res.json({ isAuthenticated: true, user: req.session.user });
     } else {
         res.json({ isAuthenticated: false });
+    }
+});
+
+// Middleware pour vérifier les droits d'administrateur
+function isAdmin(req, res, next) {
+    if (req.session.user && req.session.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ error: 'Accès non autorisé' });
+    }
+}
+
+// Exemple d'utilisation du middleware pour une route d'administration
+app.get('/api/admin/users', isAdmin, async (req, res) => {
+    // Code pour récupérer la liste des utilisateurs
+});
+
+// Route pour récupérer tous les utilisateurs (accessible uniquement aux admins)
+app.get('/api/users', isAdmin, async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        res.json(users);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
     }
 });
 
