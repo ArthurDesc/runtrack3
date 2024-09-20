@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     fetchUsers();
+    chargerDemandesReservation();
 });
 
 function fetchUsers() {
@@ -107,4 +108,54 @@ function updateRole(userId) {
         console.error('Erreur:', error);
         alert('Erreur lors de la mise à jour du rôle');
     });
+}
+
+function chargerDemandesReservation() {
+    fetch('/api/demandes-reservation')
+        .then(response => response.json())
+        .then(demandes => {
+            const tbody = document.querySelector('#table-demandes-reservation tbody');
+            tbody.innerHTML = '';
+            demandes.forEach(demande => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${demande.nom_utilisateur}</td>
+                    <td>${demande.date}</td>
+                    <td>
+                        <button class="btn-small green" onclick="approuverDemande(${demande.id})">Approuver</button>
+                        <button class="btn-small red" onclick="refuserDemande(${demande.id})">Refuser</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error('Erreur:', error));
+}
+
+function approuverDemande(id) {
+    gererDemande(id, 'approuver');
+}
+
+function refuserDemande(id) {
+    gererDemande(id, 'refuser');
+}
+
+function gererDemande(id, action) {
+    fetch(`/api/gerer-demande-reservation/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            M.toast({html: `Demande ${action === 'approuver' ? 'approuvée' : 'refusée'} avec succès`});
+            chargerDemandesReservation();
+        } else {
+            M.toast({html: 'Erreur lors du traitement de la demande'});
+        }
+    })
+    .catch(error => console.error('Erreur:', error));
 }

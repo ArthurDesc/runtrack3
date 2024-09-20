@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const fs = require('fs').promises;
+const path = require('path');
 
 // Configuration de la connexion à la base de données
 const dbConfig = {
@@ -99,10 +100,43 @@ async function updateUserRole(userId, newRole) {
   }
 }
 
+// Fonction pour insérer les demandes de réservation
+async function insertDemandeReservation(userId, dates) {
+    const filePath = path.join(__dirname, 'reservations.json');
+    try {
+        // Lire le fichier existant
+        let reservations = [];
+        try {
+            const data = await fs.readFile(filePath, 'utf8');
+            reservations = JSON.parse(data);
+        } catch (error) {
+            // Si le fichier n'existe pas, on commence avec un tableau vide
+            console.log('Création d\'un nouveau fichier reservations.json');
+        }
+
+        // Ajouter les nouvelles demandes
+        for (const date of dates) {
+            reservations.push({
+                userId,
+                date,
+                statut: 'en_attente'
+            });
+        }
+
+        // Écrire les données mises à jour dans le fichier
+        await fs.writeFile(filePath, JSON.stringify(reservations, null, 2));
+        console.log('Demandes de réservation enregistrées avec succès');
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement des demandes de réservation:', error);
+        throw error;
+    }
+}
+
 module.exports = {
   insertUser,
   exportDataToDatabase,
   findUserByEmail,
   getAllUsers,
-  updateUserRole
+  updateUserRole,
+  insertDemandeReservation
 };

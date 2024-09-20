@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
-const { insertUser, findUserByEmail, insertReservation, getAllUsers } = require('./database');
+const { insertUser, findUserByEmail, insertReservation, getAllUsers, getDemandesReservation, approuverDemandeReservation, refuserDemandeReservation, ajouterReservationJson, insertDemandeReservation } = require('./database');
 
 const app = express();
 
@@ -108,47 +108,20 @@ function estAuthentifie(req, res, next) {
     }
 }
 
-// Route pour la réservation
-app.post('/api/reservations', async (req, res) => {
-    const { dates } = req.body;
-    
-    if (!req.session || !req.session.user) {
-        return res.status(401).json({ success: false, error: 'Utilisateur non connecté' });
-    }
-
-    const userId = req.session.user.id;
-
-    try {
-        let reservations = [];
-        try {
-            const data = await fs.readFile('reservations.json', 'utf8');
-            reservations = JSON.parse(data);
-        } catch (error) {
-            console.log('Création d\'un nouveau fichier reservations.json');
-        }
-
-        dates.forEach(date => {
-            reservations.push({ date, userId });
-        });
-
-        await fs.writeFile('reservations.json', JSON.stringify(reservations, null, 2));
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Erreur lors de la réservation:', error);
-        res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde des réservations' });
-    }
-});
-
 // Route pour les réservations
 app.get('/api/reservations', async (req, res) => {
     try {
+        // Si vous lisez depuis un fichier
         const data = await fs.readFile('reservations.json', 'utf8');
         const reservations = JSON.parse(data);
         res.json(reservations);
+        
+        // Ou si vous utilisez une base de données
+        // const reservations = await getReservationsFromDatabase();
+        // res.json(reservations);
     } catch (error) {
-        console.error('Erreur lors de la lecture des réservations:', error);
-        res.status(500).json({ error: 'Erreur serveur' });
+        console.error('Erreur lors de la récupération des réservations:', error);
+        res.status(500).json({ error: 'Erreur serveur lors de la récupération des réservations' });
     }
 });
 
@@ -183,6 +156,36 @@ app.get('/api/users', isAdmin, async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de la récupération des utilisateurs:', error);
         res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// Nouvelle route pour les demandes de réservation
+app.get('/api/demandes-reservation', async (req, res) => {
+    if (!req.session.isAdmin) {
+        return res.status(403).json({ error: 'Accès non autorisé' });
+    }
+    try {
+        const demandes = await getDemandesReservation();
+        res.json(demandes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des demandes' });
+    }
+});
+
+// Nouvelle route pour la demande de réservation
+app.post('/api/demande-reservation', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Utilisateur non connecté' });
+    }
+
+    const { dates } = req.body;
+    try {
+        await insertDemandeReservation(req.session.user.id, dates);
+        res.json({ success: true, message: 'Demande de réservation enregistrée' });
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement de la demande:', error);
+        res.status(500).json({ error: 'Erreur lors de l\'enregistrement de la demande' });
     }
 });
 

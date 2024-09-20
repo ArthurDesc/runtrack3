@@ -22,15 +22,6 @@ function initCalendar() {
         selectable: true, // Permet la sélection de dates
         select: function(info) {
             let dateStr = info.startStr;
-            let selectedDate = new Date(dateStr);
-            let today = new Date();
-            today.setHours(0, 0, 0, 0); // Réinitialiser l'heure à minuit
-
-            if (selectedDate < today) {
-                alert('Vous ne pouvez pas réserver une date dans le passé.');
-                return;
-            }
-
             if (!selectedDates.includes(dateStr)) {
                 selectedDates.push(dateStr);
                 calendar.addEvent({
@@ -61,43 +52,37 @@ function chargerRendezVousExistants() {
     .catch(error => console.error('Erreur lors du chargement des rendez-vous:', error));
 }
 
-function validerDatesSelectionnees() {
-    if (selectedDates.length === 0) {
-        alert('Veuillez sélectionner au moins une date.');
+function validerDatesSelectionnee() {
+    const datesSelectionnees = calendar.getEvents().map(event => event.startStr);
+    if (datesSelectionnees.length === 0) {
+        M.toast({html: 'Veuillez sélectionner au moins une date.'});
         return;
     }
 
-    fetch('/api/reservations', {
+    // Envoyer une demande d'autorisation au lieu d'une réservation directe
+    fetch('/api/demande-reservation', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ dates: selectedDates }),
-        credentials: 'same-origin'
+        body: JSON.stringify({ dates: datesSelectionnees }),
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Rendez-vous réservés avec succès !');
-            selectedDates.forEach(date => {
-                calendar.addEvent({
-                    title: 'Réservé',
-                    start: date,
-                    allDay: true
-                });
-            });
-            selectedDates = [];
+            M.toast({html: 'Demande de réservation envoyée avec succès. En attente d\'approbation.'});
+            calendar.removeAllEvents();
         } else {
-            alert('Erreur lors de la réservation : ' + data.error);
+            M.toast({html: 'Erreur lors de l\'envoi de la demande de réservation.'});
         }
     })
     .catch(error => {
         console.error('Erreur:', error);
-        alert('Une erreur est survenue lors de la réservation');
+        M.toast({html: 'Une erreur est survenue lors de l\'envoi de la demande.'});
     });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     initCalendar();
-    document.getElementById('valider-dates').addEventListener('click', validerDatesSelectionnees);
+    document.getElementById('valider-dates').addEventListener('click', validerDatesSelectionnee);
 });
