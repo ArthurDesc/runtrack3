@@ -1,34 +1,27 @@
 // Fonction pour vérifier si l'utilisateur est connecté
 function estConnecte() {
-    return fetch('/api/user')
+    return fetch('/api/check-auth')
         .then(response => response.json())
-        .then(data => data.isConnected);
+        .then(data => data.isAuthenticated);
 }
 
 // Fonction pour obtenir les informations de l'utilisateur
 function getUtilisateur() {
-    return fetch('/api/user')
+    return fetch('/api/check-auth')
         .then(response => response.json())
-        .then(data => data.user);
+        .then(data => data.isAuthenticated ? data.user : null);
 }
 
 // Fonction pour mettre à jour l'interface utilisateur en fonction de l'état de connexion
 function mettreAJourInterface() {
-    estConnecte().then(connecte => {
+    getUtilisateur().then(utilisateur => {
         const elementsConnecte = document.querySelectorAll('.connecte');
         const elementsDeconnecte = document.querySelectorAll('.deconnecte');
 
-        if (connecte) {
+        if (utilisateur) {
             elementsConnecte.forEach(el => el.style.display = '');
             elementsDeconnecte.forEach(el => el.style.display = 'none');
-            
-            // Mettre à jour le nom de l'utilisateur si nécessaire
-            getUtilisateur().then(user => {
-                const nomUtilisateurElements = document.querySelectorAll('.nom-utilisateur');
-                nomUtilisateurElements.forEach(el => {
-                    el.textContent = `${user.prenom} ${user.nom}`;
-                });
-            });
+            // Vous pouvez ajouter ici du code pour afficher le nom de l'utilisateur, etc.
         } else {
             elementsConnecte.forEach(el => el.style.display = 'none');
             elementsDeconnecte.forEach(el => el.style.display = '');

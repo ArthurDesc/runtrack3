@@ -22,7 +22,6 @@ function initCalendar() {
         selectable: true, // Permet la sélection de dates
         select: function(info) {
             selectedDate = info.startStr;
-            alert('Date sélectionnée : ' + selectedDate);
         }
     });
     chargerRendezVousExistants();

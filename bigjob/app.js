@@ -9,7 +9,7 @@ const app = express();
 
 // Configuration de la session
 app.use(session({
-    secret: 'votre_secret_ici',
+    secret: 'Hy8$Xp2#Zq9!Wm7@Lc6^Td5&Sf4*Bg3(Nh',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Mettez à true si vous utilisez HTTPS
@@ -26,40 +26,37 @@ app.get('/', (req, res) => {
 });
 
 // Route pour l'inscription
-// Route pour l'inscription
 app.post('/api/inscription', async (req, res) => {
+    const { prenom, nom, email, password } = req.body;
+    
+    // Vérification du domaine de l'email
+    if (!email.endsWith('@laplateforme.io')) {
+        return res.status(400).json({ error: 'Seules les adresses email de La Plateforme_ sont autorisées.' });
+    }
+
     try {
-        const { prenom, nom, email, password } = req.body;
-        const result = await insertUser({ prenom, nom, email, password });
-        
-        if (result.insertId) {
-            req.session.user = { id: result.insertId, prenom, nom, email };
-            res.json({ success: true, message: 'Inscription réussie' });
-        } else {
-            res.status(400).json({ error: 'Erreur d\'inscription' });
-        }
+        await insertUser({ prenom, nom, email, password });
+        res.status(201).json({ message: 'Utilisateur inscrit avec succès' });
     } catch (error) {
-        console.error('Erreur lors de l\'inscription:', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors de l\'inscription' });
     }
 });
 
 // Nouvelle route pour la connexion
-// Route pour la connexion
 app.post('/api/connexion', async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
         const user = await findUserByEmail(email);
-        
-        if (user && user.password === password) { // Note: Dans un vrai système, utilisez bcrypt pour comparer les mots de passe
-            req.session.user = { id: user.id, prenom: user.prenom, nom: user.nom, email: user.email };
-            res.json({ success: true, message: 'Connexion réussie' });
+        if (user && user.password === password) {
+            req.session.user = { id: user.id, email: user.email, prenom: user.prenom, nom: user.nom };
+            res.json({ message: 'Connexion réussie' });
         } else {
-            res.status(401).json({ error: 'Identifiants invalides' });
+            res.status(401).json({ error: 'Email ou mot de passe incorrect' });
         }
     } catch (error) {
-        console.error('Erreur lors de la connexion:', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors de la connexion' });
     }
 });
 
@@ -67,20 +64,10 @@ app.post('/api/connexion', async (req, res) => {
 app.post('/api/deconnexion', (req, res) => {
     req.session.destroy(err => {
         if (err) {
-            res.status(500).json({ error: 'Erreur lors de la déconnexion' });
-        } else {
-            res.json({ message: 'Déconnexion réussie' });
+            return res.status(500).json({ error: 'Erreur lors de la déconnexion' });
         }
+        res.json({ message: 'Déconnexion réussie' });
     });
-});
-
-// Route pour vérifier l'état de connexion
-app.get('/api/user', (req, res) => {
-    if (req.session.user) {
-        res.json({ isConnected: true, user: req.session.user });
-    } else {
-        res.json({ isConnected: false });
-    }
 });
 
 // Middleware pour vérifier si l'utilisateur est connecté
@@ -114,8 +101,6 @@ app.post('/api/reservation', async (req, res) => {
     if (!req.session || !req.session.user) {
         return res.status(401).json({ success: false, error: 'Utilisateur non connecté' });
     }
-
-    // LA
 
     const userId = req.session.user.id;
 
@@ -152,6 +137,15 @@ app.get('/api/reservations', async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de la lecture des réservations:', error);
         res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// Route pour vérifier l'état de connexion
+app.get('/api/check-auth', (req, res) => {
+    if (req.session.user) {
+        res.json({ isAuthenticated: true, user: req.session.user });
+    } else {
+        res.json({ isAuthenticated: false });
     }
 });
 
