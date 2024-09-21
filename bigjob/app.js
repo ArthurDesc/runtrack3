@@ -161,15 +161,14 @@ app.get('/api/users', isAdmin, async (req, res) => {
 
 // Nouvelle route pour les demandes de réservation
 app.get('/api/demandes-reservation', async (req, res) => {
-    if (!req.session.isAdmin) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-    }
     try {
-        const demandes = await getDemandesReservation();
-        res.json(demandes);
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        const reservations = JSON.parse(data);
+        res.json(reservations);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des demandes' });
+        console.error('Erreur lors de la lecture des réservations:', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des demandes de réservation' });
     }
 });
 

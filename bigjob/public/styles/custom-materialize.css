@@ -1,0 +1,27 @@
+.tabs .indicator {
+    background-color: #1565c0; /* blue darken-2 */
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+    background-color: rgba(21, 101, 192, 0.1); /* Légère teinte de blue darken-2 */
+}
+
+.tabs .tab a:hover {
+    background-color: rgba(21, 101, 192, 0.1); /* Légère teinte de blue darken-2 */
+}
+
+.tabs {
+    background-color: transparent;
+}
+
+.tabs .tab a,
+.tabs .tab a:hover,
+.tabs .tab a.active {
+    color: #1565c0; /* blue darken-2 */
+}
+
+/* Surcharge des styles Materialize pour s'assurer que notre couleur est appliquée */
+.tabs .tab a:hover,
+.tabs .tab a.active {
+    color: #1565c0 !important; /* blue darken-2 */
+}

@@ -113,17 +113,20 @@ function updateRole(userId) {
 function chargerDemandesReservation() {
     fetch('/api/demandes-reservation')
         .then(response => response.json())
-        .then(demandes => {
+        .then(reservations => {
             const tbody = document.querySelector('#table-demandes-reservation tbody');
             tbody.innerHTML = '';
-            demandes.forEach(demande => {
+            reservations.forEach(reservation => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${demande.nom_utilisateur}</td>
-                    <td>${demande.date}</td>
+                    <td>${reservation.userId}</td>
+                    <td>${reservation.date}</td>
+                    <td>${reservation.statut || 'Non spécifié'}</td>
                     <td>
-                        <button class="btn-small green" onclick="approuverDemande(${demande.id})">Approuver</button>
-                        <button class="btn-small red" onclick="refuserDemande(${demande.id})">Refuser</button>
+                        ${reservation.statut === 'en_attente' ? `
+                            <button class="btn-small green" onclick="approuverDemande(${reservation.userId}, '${reservation.date}')">Accepter</button>
+                            <button class="btn-small red" onclick="refuserDemande(${reservation.userId}, '${reservation.date}')">Refuser</button>
+                        ` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -132,21 +135,21 @@ function chargerDemandesReservation() {
         .catch(error => console.error('Erreur:', error));
 }
 
-function approuverDemande(id) {
-    gererDemande(id, 'approuver');
+function approuverDemande(userId, date) {
+    gererDemande(userId, date, 'approuver');
 }
 
-function refuserDemande(id) {
-    gererDemande(id, 'refuser');
+function refuserDemande(userId, date) {
+    gererDemande(userId, date, 'refuser');
 }
 
-function gererDemande(id, action) {
-    fetch(`/api/gerer-demande-reservation/${id}`, {
+function gererDemande(userId, date, action) {
+    fetch(`/api/gerer-demande-reservation`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ userId, date, action }),
     })
     .then(response => response.json())
     .then(data => {
