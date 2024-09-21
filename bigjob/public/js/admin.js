@@ -124,8 +124,8 @@ function chargerDemandesReservation() {
                     <td>${reservation.statut || 'Non spécifié'}</td>
                     <td>
                         ${reservation.statut === 'en_attente' ? `
-                            <button class="btn-small green" onclick="approuverDemande(${reservation.userId}, '${reservation.date}')">Accepter</button>
-                            <button class="btn-small red" onclick="refuserDemande(${reservation.userId}, '${reservation.date}')">Refuser</button>
+                            <button class="btn-small green" onclick="ouvrirModalConfirmation(${reservation.userId}, '${reservation.date}', 'approuver')">Accepter</button>
+                            <button class="btn-small red" onclick="ouvrirModalConfirmation(${reservation.userId}, '${reservation.date}', 'refuser')">Refuser</button>
                         ` : ''}
                     </td>
                 `;
@@ -135,12 +135,27 @@ function chargerDemandesReservation() {
         .catch(error => console.error('Erreur:', error));
 }
 
-function approuverDemande(userId, date) {
-    gererDemande(userId, date, 'approuver');
-}
+function ouvrirModalConfirmation(userId, date, action) {
+    const modalContent = action === 'approuver' ? 
+        'Êtes-vous sûr de vouloir accepter cette demande de réservation ?' :
+        'Êtes-vous sûr de vouloir refuser cette demande de réservation ?';
 
-function refuserDemande(userId, date) {
-    gererDemande(userId, date, 'refuser');
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h4>Confirmation</h4>
+            <p>${modalContent}</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+            <a href="#!" onclick="gererDemande(${userId}, '${date}', '${action}')" class="modal-close waves-effect waves-green btn">Confirmer</a>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const instance = M.Modal.init(modal);
+    instance.open();
 }
 
 function gererDemande(userId, date, action) {
