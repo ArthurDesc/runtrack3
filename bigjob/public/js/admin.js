@@ -84,7 +84,7 @@ function openConfirmModal(userId) {
     const confirmModalId = `confirmModal-${userId}`;
     let confirmModal = document.getElementById(confirmModalId);
     
-    if (!confirmModal) {
+        if (!confirmModal) {
         confirmModal = document.createElement('div');
         confirmModal.className = 'modal';
         confirmModal.id = confirmModalId;
@@ -197,24 +197,85 @@ function ouvrirModalConfirmation(userId, date, action) {
 }
 
 function gererDemande(userId, date, action) {
-    fetch(`/api/gerer-demande-reservation`, {
+    if (action === 'approuver') {
+        verifierReservation(date).then(isAvailable => {
+            if (isAvailable) {
+                // Si la date est disponible, procéder à l'approbation
+                fetch('/api/valider-demande-reservation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId, date }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        M.toast({html: 'Demande approuvée avec succès'});
+                        chargerDemandesReservation();
+                        // Fermer le modal de confirmation
+                        var confirmModalInstance = M.Modal.getInstance(document.getElementById('reservationConfirmModal'));
+                        confirmModalInstance.close();
+                    } else {
+                        M.toast({html: 'Erreur lors de l\'approbation de la demande'});
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    M.toast({html: 'Erreur lors de l\'approbation de la demande'});
+                });
+            } else {
+                M.toast({html: 'Il existe déjà une réservation confirmée pour cette date.'});
+            }
+        });
+    } else {
+        // Si l'action est "refuser", procéder directement au refus
+        fetch('/api/refuser-demande-reservation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, date }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                M.toast({html: 'Demande refusée avec succès'});
+                chargerDemandesReservation();
+                // Fermer le modal de confirmation
+                var confirmModalInstance = M.Modal.getInstance(document.getElementById('reservationConfirmModal'));
+                confirmModalInstance.close();
+            } else {
+                M.toast({html: 'Erreur lors du refus de la demande'});
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            M.toast({html: 'Erreur lors du refus de la demande'});
+        });
+    }
+}
+
+function verifierReservation(date) {
+    return fetch('/api/verifier-reservation', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, date, action }),
+        body: JSON.stringify({ date }),
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            M.toast({html: `Demande ${action === 'approuver' ? 'approuvée' : 'refusée'} avec succès`});
-            chargerDemandesReservation();
-            // Fermer le modal de confirmation
-            var confirmModalInstance = M.Modal.getInstance(document.getElementById('reservationConfirmModal'));
-            confirmModalInstance.close();
+        if (data.conflict) {
+            M.toast({html: data.message});
+            return false;
         } else {
-            M.toast({html: 'Erreur lors du traitement de la demande'});
+            return true;
         }
     })
-    .catch(error => console.error('Erreur:', error));
+    .catch(error => {
+        console.error('Erreur:', error);
+        M.toast({html: 'Erreur lors de la vérification de la réservation'});
+        return false;
+    });
 }

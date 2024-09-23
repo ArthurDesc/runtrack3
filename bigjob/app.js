@@ -180,11 +180,103 @@ app.post('/api/demande-reservation', async (req, res) => {
 
     const { dates } = req.body;
     try {
-        await insertDemandeReservation(req.session.user.id, dates);
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        const reservations = JSON.parse(data);
+
+        // Vérifier les doublons avant d'ajouter les nouvelles réservations
+        const newReservations = dates.map(date => ({
+            userId: req.session.user.id,
+            date: date,
+            statut: 'en_attente'
+        }));
+
+        const filteredReservations = newReservations.filter(newRes => 
+            !reservations.some(existingRes => 
+                existingRes.userId === newRes.userId && existingRes.date === newRes.date
+            )
+        );
+
+        // Ajouter les nouvelles réservations filtrées
+        reservations.push(...filteredReservations);
+
+        await fs.writeFile(filePath, JSON.stringify(reservations, null, 2));
         res.json({ success: true, message: 'Demande de réservation enregistrée' });
     } catch (error) {
         console.error('Erreur lors de l\'enregistrement de la demande:', error);
         res.status(500).json({ error: 'Erreur lors de l\'enregistrement de la demande' });
+    }
+});
+
+// Route pour valider une demande de réservation
+app.post('/api/valider-demande-reservation', isAdmin, async (req, res) => {
+    const { userId, date } = req.body;
+
+    try {
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        const reservations = JSON.parse(data);
+
+        // Trouver la demande de réservation et mettre à jour son statut
+        const reservation = reservations.find(r => r.userId === userId && r.date === date);
+        if (reservation) {
+            reservation.statut = 'confirmé';
+            await fs.writeFile(filePath, JSON.stringify(reservations, null, 2));
+            res.json({ success: true, message: 'Demande de réservation confirmée' });
+        } else {
+            res.status(404).json({ error: 'Demande de réservation non trouvée' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la validation de la demande de réservation:', error);
+        res.status(500).json({ error: 'Erreur serveur lors de la validation de la demande de réservation' });
+    }
+});
+
+// Route pour refuser une demande de réservation
+app.post('/api/refuser-demande-reservation', isAdmin, async (req, res) => {
+    const { userId, date } = req.body;
+
+    try {
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        let reservations = JSON.parse(data);
+
+        // Filtrer les réservations pour supprimer celle qui correspond à userId et date
+        const initialLength = reservations.length;
+        reservations = reservations.filter(r => !(r.userId === userId && r.date === date));
+
+        if (reservations.length === initialLength) {
+            return res.status(404).json({ error: 'Demande de réservation non trouvée' });
+        }
+
+        await fs.writeFile(filePath, JSON.stringify(reservations, null, 2));
+        res.json({ success: true, message: 'Demande de réservation refusée et supprimée' });
+    } catch (error) {
+        console.error('Erreur lors du refus de la demande de réservation:', error);
+        res.status(500).json({ error: 'Erreur serveur lors du refus de la demande de réservation' });
+    }
+});
+
+// Route pour vérifier les conflits de réservation
+app.post('/api/verifier-reservation', async (req, res) => {
+    const { date } = req.body;
+
+    try {
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        const reservations = JSON.parse(data);
+
+        // Vérifier s'il existe déjà une réservation confirmée pour la date donnée
+        const conflit = reservations.some(r => r.date === date && r.statut === 'confirmé');
+
+        if (conflit) {
+            res.json({ conflict: true, message: 'Il existe déjà une réservation confirmée pour cette date.' });
+        } else {
+            res.json({ conflict: false, message: 'Aucune réservation confirmée pour cette date.' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification des réservations:', error);
+        res.status(500).json({ error: 'Erreur serveur lors de la vérification des réservations' });
     }
 });
 
