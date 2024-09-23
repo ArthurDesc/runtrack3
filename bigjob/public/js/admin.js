@@ -43,6 +43,7 @@ function displayUsers(users) {
 function openRoleModal(userId, currentRole) {
     const modal = document.createElement('div');
     modal.className = 'modal';
+    modal.id = 'roleModal';
     modal.innerHTML = `
         <div class="modal-content">
             <h4>Gérer le rôle de l'utilisateur</h4>
@@ -63,15 +64,37 @@ function openRoleModal(userId, currentRole) {
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
-            <a href="#!" onclick="updateRole(${userId})" class="waves-effect waves-green btn">Mettre à jour</a>
+            <a href="#!" onclick="openConfirmModal(${userId})" class="waves-effect waves-green btn">Mettre à jour</a>
         </div>
     `;
     document.body.appendChild(modal);
 
     // Initialiser le modal avec Materialize
-    var elems = document.querySelectorAll('.modal');
-    var instances = M.Modal.init(elems);
-    instances[0].open();
+    var elem = document.getElementById('roleModal');
+    var instance = M.Modal.init(elem);
+    instance.open();
+}
+
+function openConfirmModal(userId) {
+    const confirmModal = document.createElement('div');
+    confirmModal.className = 'modal';
+    confirmModal.id = 'confirmModal';
+    confirmModal.innerHTML = `
+        <div class="modal-content">
+            <h4>Confirmer la mise à jour</h4>
+            <p>Êtes-vous sûr de vouloir mettre à jour le rôle de cet utilisateur ?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+            <a href="#!" onclick="updateRole(${userId})" class="waves-effect waves-green btn">Confirmer</a>
+        </div>
+    `;
+    document.body.appendChild(confirmModal);
+
+    // Initialiser le modal de confirmation
+    var elem = document.getElementById('confirmModal');
+    var instance = M.Modal.init(elem);
+    instance.open();
 }
 
 function updateRole(userId) {
@@ -99,14 +122,17 @@ function updateRole(userId) {
         return response.json();
     })
     .then(data => {
-        alert('Rôle mis à jour avec succès');
+        M.toast({html: 'Rôle mis à jour avec succès'});
         fetchUsers(); // Rafraîchir la liste des utilisateurs
-        var instance = M.Modal.getInstance(document.querySelector('.modal'));
-        instance.close();
+        // Fermer les deux modals
+        var roleModalInstance = M.Modal.getInstance(document.getElementById('roleModal'));
+        var confirmModalInstance = M.Modal.getInstance(document.getElementById('confirmModal'));
+        roleModalInstance.close();
+        confirmModalInstance.close();
     })
     .catch(error => {
         console.error('Erreur:', error);
-        alert('Erreur lors de la mise à jour du rôle');
+        M.toast({html: 'Erreur lors de la mise à jour du rôle'});
     });
 }
 
@@ -142,6 +168,7 @@ function ouvrirModalConfirmation(userId, date, action) {
 
     const modal = document.createElement('div');
     modal.className = 'modal';
+    modal.id = 'reservationConfirmModal';
     modal.innerHTML = `
         <div class="modal-content">
             <h4>Confirmation</h4>
@@ -154,7 +181,8 @@ function ouvrirModalConfirmation(userId, date, action) {
     `;
     document.body.appendChild(modal);
 
-    const instance = M.Modal.init(modal);
+    const elem = document.getElementById('reservationConfirmModal');
+    const instance = M.Modal.init(elem);
     instance.open();
 }
 
@@ -171,6 +199,9 @@ function gererDemande(userId, date, action) {
         if (data.success) {
             M.toast({html: `Demande ${action === 'approuver' ? 'approuvée' : 'refusée'} avec succès`});
             chargerDemandesReservation();
+            // Fermer le modal de confirmation
+            var confirmModalInstance = M.Modal.getInstance(document.getElementById('reservationConfirmModal'));
+            confirmModalInstance.close();
         } else {
             M.toast({html: 'Erreur lors du traitement de la demande'});
         }
