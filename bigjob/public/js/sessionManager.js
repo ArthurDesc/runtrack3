@@ -18,6 +18,7 @@ function mettreAJourInterface() {
         const elementsConnecte = document.querySelectorAll('.connecte');
         const elementsDeconnecte = document.querySelectorAll('.deconnecte');
         const elementsAdmin = document.querySelectorAll('.admin-only');
+        const elementsModerator = document.querySelectorAll('.moderator-only');
 
         if (utilisateur) {
             elementsConnecte.forEach(el => el.style.display = '');
@@ -28,9 +29,14 @@ function mettreAJourInterface() {
             nomUtilisateurElements.forEach(el => el.textContent = `${utilisateur.prenom} `);
             
             // Afficher le bouton d'administration si l'utilisateur est admin ou moderator
-            if (utilisateur.role === 'admin' || utilisateur.role === 'moderator') {
+            if (utilisateur.role === 'admin') {
                 elementsAdmin.forEach(el => el.style.display = '');
+                elementsModerator.forEach(el => el.style.display = 'none');
+            }   else if (utilisateur.role === 'moderator') {
+                elementsModerator.forEach(el => el.style.display = '');
+                elementsAdmin.forEach(el => el.style.display = 'none');
             } else {
+                elementsModerator.forEach(el => el.style.display = 'none');
                 elementsAdmin.forEach(el => el.style.display = 'none');
             }
         } else {
