@@ -68,41 +68,13 @@ function openRoleModal(userId, currentRole) {
             </div>
             <div class="modal-footer">
                 <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
-                <a href="#!" onclick="openConfirmModal(${userId})" class="waves-effect waves-green btn">Mettre à jour</a>
+                <a href="#!" onclick="updateRole(${userId})" class="waves-effect waves-green btn">Mettre à jour</a>
             </div>
         `;
         document.body.appendChild(modal);
     }
 
-    // Initialiser le modal avec Materialize
     var elem = document.getElementById(modalId);
-    var instance = M.Modal.init(elem);
-    instance.open();
-}
-
-function openConfirmModal(userId) {
-    const confirmModalId = `confirmModal-${userId}`;
-    let confirmModal = document.getElementById(confirmModalId);
-    
-        if (!confirmModal) {
-        confirmModal = document.createElement('div');
-        confirmModal.className = 'modal';
-        confirmModal.id = confirmModalId;
-        confirmModal.innerHTML = `
-            <div class="modal-content">
-                <h4>Confirmer la mise à jour</h4>
-                <p>Êtes-vous sûr de vouloir mettre à jour le rôle de cet utilisateur ?</p>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
-                <a href="#!" onclick="updateRole(${userId})" class="waves-effect waves-green btn">Confirmer</a>
-            </div>
-        `;
-        document.body.appendChild(confirmModal);
-    }
-
-    // Initialiser le modal de confirmation
-    var elem = document.getElementById(confirmModalId);
     var instance = M.Modal.init(elem);
     instance.open();
 }
@@ -134,11 +106,12 @@ function updateRole(userId) {
     .then(data => {
         M.toast({html: 'Rôle mis à jour avec succès'});
         fetchUsers(); // Rafraîchir la liste des utilisateurs
-        // Fermer les deux modals
         var roleModalInstance = M.Modal.getInstance(document.getElementById(`roleModal-${userId}`));
-        var confirmModalInstance = M.Modal.getInstance(document.getElementById(`confirmModal-${userId}`));
-        roleModalInstance.close();
-        confirmModalInstance.close();
+        if (roleModalInstance) {
+            roleModalInstance.close();
+        } else {
+            console.error('Instance de modal non trouvée');
+        }
     })
     .catch(error => {
         console.error('Erreur:', error);

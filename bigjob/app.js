@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
-const { insertUser, findUserByEmail, insertReservation, getAllUsers, getDemandesReservation, approuverDemandeReservation, refuserDemandeReservation, ajouterReservationJson, insertDemandeReservation } = require('./database');
+const { insertUser, findUserByEmail, insertReservation, getAllUsers, getDemandesReservation, approuverDemandeReservation, refuserDemandeReservation, ajouterReservationJson, insertDemandeReservation, updateUserRole } = require('./database');
 
 const app = express();
 
@@ -277,6 +277,23 @@ app.post('/api/verifier-reservation', async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de la vérification des réservations:', error);
         res.status(500).json({ error: 'Erreur serveur lors de la vérification des réservations' });
+    }
+});
+
+// Route pour mettre à jour le rôle d'un utilisateur (accessible uniquement aux admins)
+app.put('/api/users/:id/role', isAdmin, async (req, res) => {
+    const userId = req.params.id;
+    const { role } = req.body;
+
+    console.log(`Mise à jour du rôle de l'utilisateur ${userId} en ${role}`);
+
+    try {
+        // Assurez-vous que la fonction updateUserRole existe dans votre fichier database.js
+        await updateUserRole(userId, role);
+        res.json({ success: true, message: 'Rôle mis à jour avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du rôle:', error);
+        res.status(500).json({ error: 'Erreur serveur lors de la mise à jour du rôle' });
     }
 });
 

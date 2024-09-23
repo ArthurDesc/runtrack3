@@ -88,12 +88,15 @@ async function getAllUsers() {
 }
 
 // Fonction pour mettre à jour le rôle d'un utilisateur
-async function updateUserRole(userId, newRole) {
+async function updateUserRole(userId, role) {
   const connection = await connectToDatabase();
   try {
-    await connection.execute('UPDATE users SET role = ? WHERE id = ?', [newRole, userId]);
+    await connection.execute(
+      'UPDATE users SET role = ? WHERE id = ?',
+      [role, userId]
+    );
   } catch (error) {
-    console.error('Erreur lors de la mise à jour du rôle de l\'utilisateur:', error);
+    console.error('Erreur lors de la mise à jour du rôle:', error);
     throw error;
   } finally {
     await connection.end();
