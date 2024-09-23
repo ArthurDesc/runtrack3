@@ -105,7 +105,7 @@ function mettreAJourInterface(estConnecte, user) {
 }
 
 function isAdmin(req, res, next) {
-    if (req.session.user && req.session.user.role === 'admin') {
+    if (req.session.user && req.session.user.role === 'admin' || req.session.user.role === 'moderator') {
         next();
     } else {
         res.status(403).json({ error: 'Accès non autorisé' });

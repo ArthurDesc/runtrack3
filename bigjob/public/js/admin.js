@@ -1,7 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     fetchUsers();
     chargerDemandesReservation();
+    cacherBoutonRoleSiModerateur();
 });
+
+function cacherBoutonRoleSiModerateur() {
+    getUtilisateur().then(utilisateur => {
+        if (utilisateur.role === 'moderator') {
+            const roleButtons = document.querySelectorAll('.btn-role');
+            roleButtons.forEach(button => button.style.display = 'none');
+        }
+    });
+}
 
 function fetchUsers() {
     fetch('/api/users')
@@ -24,19 +34,21 @@ function displayUsers(users) {
     const tableBody = document.getElementById('users-table-body');
     tableBody.innerHTML = '';
 
-    users.forEach(user => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${user.id}</td>
-            <td>${user.prenom}</td>
-            <td>${user.nom}</td>
-            <td>${user.email}</td>
-            <td>${user.role}</td>
-            <td>
-                <button class="btn-small waves-effect waves-light" onclick="openRoleModal(${user.id}, '${user.role}')">Rôle</button>
-            </td>
-        `;
-        tableBody.appendChild(row);
+    getUtilisateur().then(utilisateur => {
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.prenom}</td>
+                <td>${user.nom}</td>
+                <td>${user.email}</td>
+                <td>${user.role}</td>
+                <td>
+                    ${utilisateur.role === 'admin' ? `<button class="btn-small waves-effect waves-light btn-role" onclick="openRoleModal(${user.id}, '${user.role}')">Rôle</button>` : ''}
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
     });
 }
 

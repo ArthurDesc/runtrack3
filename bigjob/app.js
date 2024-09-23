@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
 const { insertUser, findUserByEmail, insertReservation, getAllUsers, getDemandesReservation, approuverDemandeReservation, refuserDemandeReservation, ajouterReservationJson, insertDemandeReservation, updateUserRole } = require('./database');
+const adminRoutes = require('./routes/admin'); // Importer les routes admin
 
 const app = express();
 
@@ -134,22 +135,20 @@ app.get('/api/check-auth', (req, res) => {
     }
 });
 
-// Middleware pour vérifier les droits d'administrateur
-function isAdmin(req, res, next) {
-    if (req.session.user && req.session.user.role === 'admin') {
+// Middleware pour vérifier les droits d'administrateur ou de modérateur
+function isAdminOrModerator(req, res, next) {
+    if (req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'moderator')) {
         next();
     } else {
         res.status(403).json({ error: 'Accès non autorisé' });
     }
 }
 
-// Exemple d'utilisation du middleware pour une route d'administration
-app.get('/api/admin/users', isAdmin, async (req, res) => {
-    // Code pour récupérer la liste des utilisateurs
-});
+// Utilisation du middleware pour la route admin
+app.use('/admin', isAdminOrModerator, adminRoutes); // Utiliser les routes admin
 
-// Route pour récupérer tous les utilisateurs (accessible uniquement aux admins)
-app.get('/api/users', isAdmin, async (req, res) => {
+// Route pour récupérer tous les utilisateurs (accessible uniquement aux admins et modérateurs)
+app.get('/api/users', isAdminOrModerator, async (req, res) => {
     try {
         const users = await getAllUsers();
         res.json(users);
@@ -209,7 +208,7 @@ app.post('/api/demande-reservation', async (req, res) => {
 });
 
 // Route pour valider une demande de réservation
-app.post('/api/valider-demande-reservation', isAdmin, async (req, res) => {
+app.post('/api/valider-demande-reservation', isAdminOrModerator, async (req, res) => {
     const { userId, date } = req.body;
 
     try {
@@ -233,7 +232,7 @@ app.post('/api/valider-demande-reservation', isAdmin, async (req, res) => {
 });
 
 // Route pour refuser une demande de réservation
-app.post('/api/refuser-demande-reservation', isAdmin, async (req, res) => {
+app.post('/api/refuser-demande-reservation', isAdminOrModerator, async (req, res) => {
     const { userId, date } = req.body;
 
     try {
@@ -281,7 +280,7 @@ app.post('/api/verifier-reservation', async (req, res) => {
 });
 
 // Route pour mettre à jour le rôle d'un utilisateur (accessible uniquement aux admins)
-app.put('/api/users/:id/role', isAdmin, async (req, res) => {
+app.put('/api/users/:id/role', isAdminOrModerator, async (req, res) => {
     const userId = req.params.id;
     const { role } = req.body;
 

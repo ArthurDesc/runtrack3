@@ -27,8 +27,8 @@ function mettreAJourInterface() {
             const nomUtilisateurElements = document.querySelectorAll('.nom-utilisateur');
             nomUtilisateurElements.forEach(el => el.textContent = `${utilisateur.prenom} `);
             
-            // Afficher le bouton d'administration si l'utilisateur est admin
-            if (utilisateur.role === 'admin') {
+            // Afficher le bouton d'administration si l'utilisateur est admin ou moderator
+            if (utilisateur.role === 'admin' || utilisateur.role === 'moderator') {
                 elementsAdmin.forEach(el => el.style.display = '');
             } else {
                 elementsAdmin.forEach(el => el.style.display = 'none');
