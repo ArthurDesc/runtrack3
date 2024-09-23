@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Ajout du CDN de Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Ajout du CDN de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="bg-blue-500 text-white p-4">
+        <nav class="flex justify-around">
+            <a href="./index.html" class="hover:underline">Accueil</a>
+            <a href="./index.html" class="hover:underline">Inscription</a>
+            <a href="./index.html" class="hover:underline">Connexion</a>
+            <a href="./index.html" class="hover:underline">Rechercher</a>
+        </nav>
+    </header>
+    <main class="p-4">
+        <section class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
+            <form>
+                <fieldset>
+                    <legend class="text-2xl font-bold mb-4">Création de compte</legend>
+                    <div class="mb-4">
+                        <label class="block mb-2">
+                            <input type="radio" name="civilite" value="monsieur" class="mr-2"> Monsieur
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="civilite" value="madame" class="mr-2"> Madame
+                        </label>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Prénom:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-user mr-2 text-gray-500"></i>
+                            <input type="text" name="prenom" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Nom:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-user mr-2 text-gray-500"></i>
+                            <input type="text" name="nom" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Adresse:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-home mr-2 text-gray-500"></i>
+                            <input type="text" name="adresse" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Email:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-envelope mr-2 text-gray-500"></i>
+                            <input type="email" name="email" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Mot de passe:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-lock mr-2 text-gray-500"></i>
+                            <input type="password" name="password" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Confirmer mot de passe:</label>
+                        <div class="flex items-center border rounded-lg p-2 shadow-sm">
+                            <i class="fas fa-lock mr-2 text-gray-500"></i>
+                            <input type="password" name="confirm_password" class="flex-1 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Passions:</label>
+                        <label class="block mb-2">
+                            <input type="checkbox" name="passions" value="informatique" class="mr-2"> Informatique
+                        </label>
+                        <label class="block mb-2">
+                            <input type="checkbox" name="passions" value="voyages" class="mr-2"> Voyages
+                        </label>
+                        <label class="block mb-2">
+                            <input type="checkbox" name="passions" value="sport" class="mr-2"> Sport
+                        </label>
+                        <label class="block mb-2">
+                            <input type="checkbox" name="passions" value="lecture" class="mr-2"> Lecture
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg shadow-lg hover:bg-blue-600">Valider</button>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+    <footer class="bg-blue-500 text-white p-4 mt-4">
+        <nav class="flex justify-around">
+            <a href="./index.html" class="hover:underline">Accueil</a>
+            <a href="./index.html" class="hover:underline">Inscription</a>
+            <a href="./index.html" class="hover:underline">Connexion</a>
+            <a href="./index.html" class="hover:underline">Rechercher</a>
+        </nav>
+    </footer>
+</body>
+</html>

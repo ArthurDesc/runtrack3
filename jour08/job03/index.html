@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Ajout du CDN de Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-blue-500 text-white p-4">
+        <nav class="flex justify-around">
+            <a href="./index.html" class="hover:underline">Accueil</a>
+            <a href="./index.html" class="hover:underline">Inscription</a>
+            <a href="./index.html" class="hover:underline">Connexion</a>
+            <a href="./index.html" class="hover:underline">Rechercher</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form>
+                <fieldset>
+                    <legend>Création de compte</legend>
+                    <label>
+                        <input type="radio" name="civilite" value="monsieur"> Monsieur
+                    </label>
+                    <label>
+                        <input type="radio" name="civilite" value="madame"> Madame
+                    </label>
+                    <br>
+                    <label>Prénom: <input type="text" name="prenom"></label>
+                    <br>
+                    <label>Nom: <input type="text" name="nom"></label>
+                    <br>
+                    <label>Adresse: <input type="text" name="adresse"></label>
+                    <br>
+                    <label>Email: <input type="email" name="email"></label>
+                    <br>
+                    <label>Mot de passe: <input type="password" name="password"></label>
+                    <br>
+                    <label>Confirmer mot de passe: <input type="password" name="confirm_password"></label>
+                    <br>
+                    <label>
+                        <input type="checkbox" name="passions" value="informatique"> Informatique
+                    </label>
+                    <label>
+                        <input type="checkbox" name="passions" value="voyages"> Voyages
+                    </label>
+                    <label>
+                        <input type="checkbox" name="passions" value="sport"> Sport
+                    </label>
+                    <label>
+                        <input type="checkbox" name="passions" value="lecture"> Lecture
+                    </label>
+                    <br>
+                    <button type="submit">Valider</button>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+    <footer class="bg-blue-500 text-white p-4 mt-4">
+        <nav class="flex justify-around">
+            <a href="./index.html" class="hover:underline">Accueil</a>
+            <a href="./index.html" class="hover:underline">Inscription</a>
+            <a href="./index.html" class="hover:underline">Connexion</a>
+            <a href="./index.html" class="hover:underline">Rechercher</a>
+        </nav>
+    </footer>
+</body>
+</html>

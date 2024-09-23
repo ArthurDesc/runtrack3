@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo</title>
+    <!-- Ajout du CDN de Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Ajout du CDN de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-black text-white">
+    <header class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+            <i class="fas fa-tachometer-alt text-2xl text-pink-500"></i>
+            <span class="ml-2 text-xl font-bold">TURBO</span>
+        </div>
+        <nav class="flex space-x-4">
+            <a href="./index.html" class="hover:underline">Docs</a>
+            <a href="./page2.html" class="hover:underline">Blog</a>
+            <a href="#" class="hover:underline">Showcase</a>
+            <a href="#" class="hover:underline">Enterprise</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <input type="text" placeholder="Search documentation..." class="bg-gray-800 text-white p-2 rounded-lg">
+            <i class="fas fa-user-circle text-2xl"></i>
+        </div>
+    </header>
+    <main class="text-center p-8">
+        <h1 class="text-4xl font-bold mb-4">Make Ship Happen</h1>
+        <p class="text-lg mb-8">Turbo is an incremental bundler and build system optimized for JavaScript and TypeScript, written in Rust.</p>
+        <div class="flex justify-center space-x-4 mb-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-2xl font-bold">TURBOREPO</span>
+                </div>
+                <div class="flex justify-center items-center mb-4">
+                    <i class="fas fa-cogs text-4xl text-pink-500"></i>
+                </div>
+                <p class="text-lg">High-performance build system for JavaScript and TypeScript codebases.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-2xl font-bold">TURBOPACK</span>
+                    <span class="bg-gray-700 text-white text-xs px-2 py-1 rounded">ALPHA</span>
+                </div>
+                <div class="flex justify-center items-center mb-4">
+                    <i class="fas fa-box text-4xl text-pink-500"></i>
+                </div>
+                <p class="text-lg">Introducing the Rust-powered successor to Webpack.</p>
+            </div>
+        </div>
+        <p class="text-sm text-gray-500">TRUSTED BY TEAMS FROM AROUND THE WORLD</p>
+    </main>
+</body>
+</html>
