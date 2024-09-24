@@ -1,57 +1,12 @@
 [
   {
     "userId": 1,
-    "date": "2024-09-28",
-    "statut": "confirmé"
-  },
-  {
-    "userId": 1,
-    "date": "2024-09-30",
-    "statut": "confirmé"
-  },
-  {
-    "userId": 1,
-    "date": "2024-10-01",
+    "date": "2024-09-25",
     "statut": "confirmé"
   },
   {
     "userId": 1,
     "date": "2024-09-26",
     "statut": "confirmé"
-  },
-  {
-    "userId": 2,
-    "date": "2024-09-30",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-10-01",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-09-26",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-09-30",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-10-01",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-09-26",
-    "statut": "en_attente"
-  },
-  {
-    "userId": 2,
-    "date": "2024-09-27",
-    "statut": "en_attente"
   }
 ]

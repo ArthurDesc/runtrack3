@@ -21,6 +21,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Fonction pour vérifier et créer le fichier reservations.json si nécessaire
+async function verifierEtCreerFichierReservations() {
+    const filePath = path.join(__dirname, 'reservations.json');
+    try {
+        await fs.access(filePath);
+    } catch (error) {
+        // Le fichier n'existe pas, le créer
+        const initialData = [];
+        await fs.writeFile(filePath, JSON.stringify(initialData, null, 2));
+        console.log('Fichier reservations.json créé');
+    }
+}
+
+// Appeler la fonction pour vérifier et créer le fichier au démarrage du serveur
+verifierEtCreerFichierReservations();
+
 // Route pour servir index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -112,14 +128,16 @@ function estAuthentifie(req, res, next) {
 // Route pour les réservations
 app.get('/api/reservations', async (req, res) => {
     try {
-        // Si vous lisez depuis un fichier
-        const data = await fs.readFile('reservations.json', 'utf8');
+        const filePath = path.join(__dirname, 'reservations.json');
+        const data = await fs.readFile(filePath, 'utf8');
         const reservations = JSON.parse(data);
-        res.json(reservations);
         
-        // Ou si vous utilisez une base de données
-        // const reservations = await getReservationsFromDatabase();
-        // res.json(reservations);
+        // Assurez-vous que reservations est un tableau
+        if (Array.isArray(reservations)) {
+            res.json(reservations);
+        } else {
+            res.status(500).json({ error: 'Les données de réservation ne sont pas un tableau' });
+        }
     } catch (error) {
         console.error('Erreur lors de la récupération des réservations:', error);
         res.status(500).json({ error: 'Erreur serveur lors de la récupération des réservations' });

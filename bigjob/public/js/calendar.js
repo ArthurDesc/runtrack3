@@ -41,13 +41,18 @@ function chargerRendezVousExistants() {
     fetch('/api/reservations')
     .then(response => response.json())
     .then(data => {
-        data.forEach(reservation => {
-            calendar.addEvent({
-                title: 'Réservé',
-                start: reservation.date,
-                allDay: true
+        console.log('Données de l\'API /api/reservations:', data); // Log des données de l'API
+        if (Array.isArray(data)) {
+            data.forEach(reservation => {
+                calendar.addEvent({
+                    title: 'Réservé',
+                    start: reservation.date,
+                    allDay: true
+                });
             });
-        });
+        } else {
+            console.error('La réponse de l\'API n\'est pas un tableau:', data);
+        }
     })
     .catch(error => console.error('Erreur lors du chargement des rendez-vous:', error));
 }
@@ -59,6 +64,8 @@ function validerDatesSelectionnee() {
         return;
     }
 
+    console.log('Dates sélectionnées:', datesSelectionnees); // Log des dates sélectionnées
+
     // Envoyer une demande d'autorisation au lieu d'une réservation directe
     fetch('/api/demande-reservation', {
         method: 'POST',
@@ -67,8 +74,12 @@ function validerDatesSelectionnee() {
         },
         body: JSON.stringify({ dates: datesSelectionnees }),
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Réponse de l\'API:', response); // Log de la réponse de l'API
+        return response.json();
+    })
     .then(data => {
+        console.log('Données de l\'API:', data); // Log des données de l'API
         if (data.success) {
             M.toast({html: 'Demande de réservation envoyée avec succès. En attente d\'approbation.'});
             calendar.removeAllEvents();
