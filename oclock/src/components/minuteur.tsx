@@ -6,7 +6,6 @@ import { ArrowUp, ArrowDown } from 'lucide-react';
 const Minuteur: React.FC = () => {
   const [temps, setTemps] = useState<number>(0);
   const [enCours, setEnCours] = useState<boolean>(false);
-  const [inputTemps, setInputTemps] = useState<string>('');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -34,14 +33,11 @@ const Minuteur: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputTemps(e.target.value);
-  };
-
-  const definirTemps = () => {
-    const nouveauTemps = parseInt(inputTemps);
+    const nouveauTemps = parseInt(e.target.value);
     if (!isNaN(nouveauTemps) && nouveauTemps >= 0) {
       setTemps(nouveauTemps);
-      setInputTemps('');
+    } else if (e.target.value === '') {
+      setTemps(0);
     }
   };
 
@@ -53,26 +49,22 @@ const Minuteur: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
-        <Button onClick={augmenterTemps} disabled={enCours}>
-          <ArrowUp size={24} />
-        </Button>
+      <Button variant="outline" onClick={augmenterTemps} disabled={enCours}>
+        <ArrowUp size={24} />
+      </Button>
       <div className="text-4xl font-bold">{formaterTemps(temps)}</div>
-      <div className="flex space-x-2">
-        <Button onClick={diminuerTemps} disabled={enCours}>
-          <ArrowDown size={24} />
-        </Button>
-      </div>
-      <div className="flex space-x-2">
-        <Input
-          type="number"
-          placeholder="Entrez le temps en secondes"
-          value={inputTemps}
-          onChange={handleInputChange}
-          disabled={enCours}
-        />
-        <Button onClick={definirTemps} disabled={enCours}>Valider</Button>
-      </div>
-      <Button onClick={toggleMinuteur}>
+      <Button variant="outline" onClick={diminuerTemps} disabled={enCours}>
+        <ArrowDown size={24} />
+      </Button>
+      <Input
+        type="number"
+        placeholder="Entrez le temps en secondes"
+        value={temps > 0 ? temps : ''}
+        onChange={handleInputChange}
+        disabled={enCours}
+        className="w-full max-w-xs"
+      />
+      <Button variant="outline" onClick={toggleMinuteur}>
         {enCours ? 'Arrêter' : 'Démarrer'}
       </Button>
     </div>
