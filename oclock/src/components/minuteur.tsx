@@ -1,0 +1,82 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ArrowUp, ArrowDown } from 'lucide-react';
+
+const Minuteur: React.FC = () => {
+  const [temps, setTemps] = useState<number>(0);
+  const [enCours, setEnCours] = useState<boolean>(false);
+  const [inputTemps, setInputTemps] = useState<string>('');
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (enCours && temps > 0) {
+      interval = setInterval(() => {
+        setTemps((prevTemps) => prevTemps - 1);
+      }, 1000);
+    } else if (temps === 0 && enCours) {
+      alert("Le temps est écoulé !");
+      setEnCours(false);
+    }
+    return () => clearInterval(interval);
+  }, [enCours, temps]);
+
+  const toggleMinuteur = () => {
+    setEnCours(!enCours);
+  };
+
+  const augmenterTemps = () => {
+    setTemps((prevTemps) => prevTemps + 60);
+  };
+
+  const diminuerTemps = () => {
+    setTemps((prevTemps) => Math.max(0, prevTemps - 60));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputTemps(e.target.value);
+  };
+
+  const definirTemps = () => {
+    const nouveauTemps = parseInt(inputTemps);
+    if (!isNaN(nouveauTemps) && nouveauTemps >= 0) {
+      setTemps(nouveauTemps);
+      setInputTemps('');
+    }
+  };
+
+  const formaterTemps = (secondes: number): string => {
+    const minutes = Math.floor(secondes / 60);
+    const secondesRestantes = secondes % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secondesRestantes.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+        <Button onClick={augmenterTemps} disabled={enCours}>
+          <ArrowUp size={24} />
+        </Button>
+      <div className="text-4xl font-bold">{formaterTemps(temps)}</div>
+      <div className="flex space-x-2">
+        <Button onClick={diminuerTemps} disabled={enCours}>
+          <ArrowDown size={24} />
+        </Button>
+      </div>
+      <div className="flex space-x-2">
+        <Input
+          type="number"
+          placeholder="Entrez le temps en secondes"
+          value={inputTemps}
+          onChange={handleInputChange}
+          disabled={enCours}
+        />
+        <Button onClick={definirTemps} disabled={enCours}>Valider</Button>
+      </div>
+      <Button onClick={toggleMinuteur}>
+        {enCours ? 'Arrêter' : 'Démarrer'}
+      </Button>
+    </div>
+  );
+};
+
+export default Minuteur;
