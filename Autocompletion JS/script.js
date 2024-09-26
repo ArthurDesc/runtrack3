@@ -31,8 +31,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const ul = document.createElement('ul');
-        ul.className = 'list-group';
+        const exactMatches = document.createElement('ul');
+        exactMatches.className = 'list-group mb-2';
+        const partialMatches = document.createElement('ul');
+        partialMatches.className = 'list-group';
+
         results.forEach(item => {
             const li = document.createElement('li');
             li.className = 'list-group-item';
@@ -41,8 +44,26 @@ document.addEventListener('DOMContentLoaded', function() {
             a.textContent = item.nom;
             a.className = 'text-decoration-none';
             li.appendChild(a);
-            ul.appendChild(li);
+
+            if (item.match_type === 0) {
+                exactMatches.appendChild(li);
+            } else {
+                partialMatches.appendChild(li);
+            }
         });
-        autocompleteResults.appendChild(ul);
+
+        if (exactMatches.children.length > 0) {
+            const exactTitle = document.createElement('h6');
+            exactTitle.textContent = 'Correspondances exactes';
+            autocompleteResults.appendChild(exactTitle);
+            autocompleteResults.appendChild(exactMatches);
+        }
+
+        if (partialMatches.children.length > 0) {
+            const partialTitle = document.createElement('h6');
+            partialTitle.textContent = 'Correspondances partielles';
+            autocompleteResults.appendChild(partialTitle);
+            autocompleteResults.appendChild(partialMatches);
+        }
     }
 });

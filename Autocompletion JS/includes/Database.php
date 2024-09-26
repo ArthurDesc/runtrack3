@@ -65,19 +65,21 @@ class Database {
     }
 
     public function search($term) {
-        error_log("Méthode search appelée avec le terme : " . $term);
-        $term = "$term%";
-        $query = "SELECT id, nom FROM animaux WHERE nom LIKE :term ORDER BY 
+        $term = strtolower($term); // Convertir en minuscules pour une recherche insensible à la casse
+        $exactTerm = "$term%";
+        $partialTerm = "%$term%";
+        
+        $query = "SELECT id, nom,
                   CASE 
-                      WHEN nom LIKE :exact THEN 0 
-                      ELSE 1 
-                  END, 
-                  nom ASC 
+                      WHEN LOWER(nom) LIKE :exactTerm THEN 0
+                      ELSE 1
+                  END AS match_type
+                  FROM animaux 
+                  WHERE LOWER(nom) LIKE :partialTerm
+                  ORDER BY match_type, nom ASC 
                   LIMIT 10";
         
-        $stmt = $this->query($query, ['term' => $term, 'exact' => $term]);
-        $results = $stmt->fetchAll();
-        error_log("Résultats de la recherche : " . json_encode($results));
-        return $results;
+        $stmt = $this->query($query, ['exactTerm' => $exactTerm, 'partialTerm' => $partialTerm]);
+        return $stmt->fetchAll();
     }
 }
