@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
         results.forEach(item => {
             const li = document.createElement('li');
             li.className = 'list-group-item';
-            li.textContent = item.nom;
-            li.addEventListener('click', function() {
-                searchInput.value = item.nom;
-                autocompleteResults.innerHTML = '';
-            });
+            const a = document.createElement('a');
+            a.href = `element.php?id=${item.id}&nom=${encodeURIComponent(item.nom)}`;
+            a.textContent = item.nom;
+            a.className = 'text-decoration-none';
+            li.appendChild(a);
             ul.appendChild(li);
         });
         autocompleteResults.appendChild(ul);
