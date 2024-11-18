@@ -17,4 +17,4 @@ function sommenombrespremiers(a, b) {
 // Exemples d'utilisation
 console.log(sommenombrespremiers(2, 3));  // Devrait retourner 5
 console.log(sommenombrespremiers(2, 4));  // Devrait retourner false
-console.log(sommenombrespremiers(17, 19));  // Devrait retourner 36
+console.log(sommenombrespremiers(17, 19));  

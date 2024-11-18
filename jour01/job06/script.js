@@ -12,5 +12,4 @@ function fizzbuzz() {
     }
 }
 
-// Appel de la fonction
 fizzbuzz();

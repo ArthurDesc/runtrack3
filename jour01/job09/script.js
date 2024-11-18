@@ -10,12 +10,10 @@ function tri(numbers, order) {
     });
 }
 
-// Exemples d'utilisation
 let tableau = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
 console.log("Tri ascendant:", tri([...tableau], "asc"));
 console.log("Tri descendant:", tri([...tableau], "desc"));
 
-// Test avec un ordre invalide
 try {
     console.log(tri([...tableau], "invalid"));
 } catch (error) {

@@ -6,5 +6,4 @@ function afficherjourssemaines() {
     }
 }
 
-// Exemples d'utilisation :
-afficherjourssemaines();  // true
+afficherjourssemaines();
